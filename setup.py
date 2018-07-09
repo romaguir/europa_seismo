@@ -9,5 +9,5 @@ setup(name='sph_models',
       author_email='rmaguire@umd.edu',
       url='www.github.com/romaguir/europa_seismo',
       packages=['europa_seismo'],
-      install_requires=['cartopy'],
+      install_requires=['pymc2'],
       license='GNU')
