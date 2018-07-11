@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import obspy
 import instaseis
 import numpy as np
@@ -35,3 +37,32 @@ def get_trise_tdur(corner_freq,scale_factor=8.):
     t_dur = 1.0/(np.pi*corner_freq)
     t_rise = t_dur/scale_factor
     return t_rise,t_dur
+
+def get_acceleration_spectrum(omega_min,omega_max,seismic_response,
+                              corner_freq,t_rise,t_dur,Mo,Q,tt):
+    '''
+    Returns the acceleration spectrum recorded at a receiver, assuming
+    a Haskell fault model (Haskell, 1969)
+
+    positional arguments--------------------------------------------------
+    omega_min: minimum frequency of spectrum (Hz)
+    omega_max: maximum frequency of spectrum (Hz)
+    seismic_response: normalized spectrum of the Green's function
+    corner_freq: corner frequency (Hz)
+    t_rise: rise time (s)
+    t_dur: duration (s)
+    Mo: scalar moment (Nm)
+    Q: bulk attenuation
+    tt: travel time between source and receiver 
+   
+    returns---------------------------------------------------------------
+    A_w = acceleration spectrum 
+    '''
+    omega_pts = 1000
+    omega = np.linspace(omega_min,omega_max,omega_pts)
+    A_w = -omega**2*seismic_response*np.exp((-np.pi*corner_freq*tt)/(Q))*\
+          Mo*np.abs(np.sinc(omega*2*np.pi*t_rise)*np.sinct_dur(omega*2*np.pi*t_dur))
+
+    return A_w
+
+def get_response_spectrum(data,dt,kind='acceleration'):

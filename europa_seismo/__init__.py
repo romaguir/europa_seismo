@@ -1,0 +1,1 @@
+from europa_seismo import acceleration
