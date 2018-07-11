@@ -65,4 +65,4 @@ def get_acceleration_spectrum(omega_min,omega_max,seismic_response,
 
     return A_w
 
-def get_response_spectrum(data,dt,kind='acceleration'):
+#def get_response_spectrum(data,dt,kind='acceleration'):

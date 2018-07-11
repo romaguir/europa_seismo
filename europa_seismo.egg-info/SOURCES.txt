@@ -2,6 +2,7 @@ README.md
 bin/find_accel_max
 europa_seismo/__init__.py
 europa_seismo/acceleration.py
+europa_seismo/utils.py
 europa_seismo.egg-info/PKG-INFO
 europa_seismo.egg-info/SOURCES.txt
 europa_seismo.egg-info/dependency_links.txt

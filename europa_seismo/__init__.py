@@ -1,1 +1,2 @@
-from europa_seismo import acceleration
+import acceleration
+import utils

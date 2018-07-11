@@ -3,6 +3,9 @@
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-from europa_seismo.acceleration import *
+import instaseis
+#from europa_seismo.acceleration import *
 
-print 'this is find_accel_max'
+parser = argparse.ArgumentParser()
+parser.add_argument('--instaseis_db',help='path to instaseis database')
+parser.add_argument('--Mo',type=np.float,help='scalar moment (Nm)')
