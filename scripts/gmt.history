@@ -1,0 +1,8 @@
+# GMT 5 Session common arguments shelf
+BEGIN GMT 5.1.2
+B	xa30+lEpicentral Distance (degrees)ya1+lMwWSne
+J	X
+JX	X4i
+R	0/180/0/10
+L	3
+END

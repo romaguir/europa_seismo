@@ -1,0 +1,15 @@
+#!/bin/bash
+
+region=0/180/0/10
+scale=X4i
+file=fig_accelmax
+
+makecpt -Cabyss -D -T0/100 -Z -I > cold.cpt
+surface AMAX_pts.dat -I1.0/0.1 -Gdummy.grd -R$region
+
+psbasemap -R$region -J$scale -Bxa30+l"Epicentral Distance (degrees)" -Bya1+l"Mw" \
+    -BWSne -K -P > $file.ps
+grdimage dummy.grd -R$region -J$scale -Ccold.cpt -K -O -P >> $file.ps
+grdcontour dummy.grd -R$region -J$scale -Ccold.cpt -K -O -P >> $file.ps
+
+rm dummy.grd

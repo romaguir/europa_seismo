@@ -65,4 +65,17 @@ def get_acceleration_spectrum(omega_min,omega_max,seismic_response,
 
     return A_w
 
-#def get_response_spectrum(data,dt,kind='acceleration'):
+def get_response_spectrum(data,dt,kind='acceleration'):
+    '''
+    Returns acceleration spectrum of the seismic response function (ie. Greens' function).
+
+    positional arguments--------------------------------------------------
+    data: displacement time series
+    dt: time step between samples in the displacement time series
+
+    returns---------------------------------------------------------------
+    (freqs,G_w): frequencies (in Hz),  displacement power spectrum of response function
+    '''
+    G_w = np.fft.fft(data)
+    freqs = np.fft.fftfreq(len(data),dt)
+    return freqs,G_w
