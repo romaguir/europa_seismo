@@ -4,7 +4,6 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import instaseis
-#from europa_seismo.acceleration import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--instaseis_db',help='path to instaseis database')
