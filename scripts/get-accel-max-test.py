@@ -6,7 +6,7 @@ from europa_seismo import acceleration,utils
 from obspy.taup import TauPyModel
 
 mars = TauPyModel('EH45Tcold')
-db = instaseis.open_db('/Volumes/G-RAID with Thunderbolt/axisem_databases/Mars_EH45Tcold_5s_noatten_database')
+db = instaseis.open_db('/home/romaguir/Documents/axisem_databases/Mars_EH45Tcold_5s_noatten_database')
 print db
 
 vs_surface = 3.0
