@@ -52,8 +52,8 @@ def get_max_accel(Mw,gcarc,Q=57822,units='dB',plot=False):
 
     #Aki and Richards 10.36
     s_w = Mo/((1.0 + ((freqs/corner_freq)**2))**(1.5))
-    plt.loglog(freqs,s_w)
-    plt.show()
+    #plt.loglog(freqs,s_w)
+    #plt.show()
 
     #Haskell parameters
     t_rise,t_dur = acceleration.get_trise_tdur(corner_freq=corner_freq,scale_factor=8.)
@@ -75,6 +75,7 @@ def get_max_accel(Mw,gcarc,Q=57822,units='dB',plot=False):
     #tt = arrs[0].time
     d_km = gcarc*km_per_deg
     tt = d_km * (1./vs_surface)
+    print d_km, tt
 
     #attenuation factor
     atten = np.exp((-np.pi*corner_freq*tt)/(Q))
@@ -117,7 +118,6 @@ x = []
 y = []
 amax = []
 
-'''
 for gcarc in gcarcs:
     print gcarc
     for Mw in Mws:
@@ -134,7 +134,6 @@ plt.scatter(x,y,c=amax,edgecolor=None)
 plt.colorbar()
 plt.show()
 np.savetxt('AMAX_pts.dat',np.c_[x,y,amax],fmt='%4f')
-'''
 
-dB = get_max_accel(Mw=7.0,gcarc=60.0,plot=True)
-print dB
+#dB = get_max_accel(Mw=7.0,gcarc=60.0,plot=True)
+#print dB

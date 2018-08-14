@@ -32,6 +32,27 @@ def Mo_to_Mw(Mo,units='Nm'):
 
     return Mw
 
+def get_MO(MT):
+    '''
+    Scalar Moment M0 in Nm
+
+    MT: moment tensor [m_rr,m_tt,m_pp,m_rt,m_rp,m_tp]
+    '''
+    m_rr = MT[0]
+    m_tt = MT[1]
+    m_pp = MT[2]
+    m_rt = MT[3]
+    m_rp = MT[4]
+    m_tp = MT[5]
+
+    MO = (np.sqrt(m_rr**2 + m_tt**2 + m_pp**2 +
+          2.*m_rt**2 + 2.*m_rp**2 + 2.*m_tp**2)) * (1./np.sqrt(2.))
+
+    return MO
+    #return (self.m_rr ** 2 + self.m_tt ** 2 + self.m_pp ** 2 +
+    #        2 * self.m_rt ** 2 + 2 * self.m_rp ** 2 +
+    #        2 * self.m_tp ** 2) ** 0.5 * 0.5 ** 0.5
+
 def phase_window(data,evdp,gcarc,sampling_rate,phase,
                  window_start,window_end,taup_model,origin_time=0.0):
     '''
