@@ -1,0 +1,1 @@
+import europa_seismo
