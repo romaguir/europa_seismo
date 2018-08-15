@@ -1,6 +1,9 @@
 #!/usr/bin/env python
-from setuptools import setup
+#from setuptools import setup
 import numpy as np
+from numpy.distutils.core import setup,Extension
+
+minos = Extension(name = 'europa_seismo.minos', sources = ['src/minos_bran.f'])
 
 setup(name='europa_seismo',
       version='0.1',
@@ -11,4 +14,5 @@ setup(name='europa_seismo',
       packages=['europa_seismo'],
       install_requires=['pymc'],
       scripts=['bin/find_accel_max'],
-      license='GNU')
+      license='GNU',
+      ext_modules = [minos])
