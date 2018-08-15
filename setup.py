@@ -4,6 +4,8 @@ import numpy as np
 from numpy.distutils.core import setup,Extension
 
 minos = Extension(name = 'europa_seismo.minos', sources = ['src/minos_bran.f'])
+rayleigh_python = Extension(name='europa_seismo.rayleigh_python',sources=['src/rayleigh_python.f', \
+                            'src/ltable_python.f'])
 
 setup(name='europa_seismo',
       version='0.1',
@@ -15,4 +17,4 @@ setup(name='europa_seismo',
       install_requires=['pymc'],
       scripts=['bin/find_accel_max'],
       license='GNU',
-      ext_modules = [minos])
+      ext_modules = [minos,rayleigh_python])
