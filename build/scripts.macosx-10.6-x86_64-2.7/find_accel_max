@@ -1,0 +1,10 @@
+#!/Users/rossmaguire/anaconda2/bin/python
+
+import argparse
+import numpy as np
+import matplotlib.pyplot as plt
+import instaseis
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--instaseis_db',help='path to instaseis database')
+parser.add_argument('--Mo',type=np.float,help='scalar moment (Nm)')

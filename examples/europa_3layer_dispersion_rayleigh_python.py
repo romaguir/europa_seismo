@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from europa_seismo.europa_seismo import rayleigh_python
+from europa_seismo.europa_seismo import rayleigh,rayleigh_python
 
 cwd = os.getcwd()
 
@@ -20,7 +20,7 @@ for i,ice_thickness in enumerate(ice_thicknesses):
     rayleigh.write_deck_model(layers,output_model='testmod.deck',base_model=cwd+'/../data/'+'icehot_20km_simple.txt')
 
     #run model
-    eps=1e-9
+    eps=1e-10
     dt=10.0
     npow=10
     fnyquist=0
@@ -31,24 +31,24 @@ for i,ice_thickness in enumerate(ice_thicknesses):
     modelfile='testmod.deck'
 
     #run model
-    (modearray,nmodes) = rayleigh_python(eps,npow,dt,fnyquist,nbran,
-                                         cmin,cmax,maxlyr,modelfile)
+    (modearray,nmodes) = rayleigh_python.rayleigh(eps,npow,dt,fnyquist,nbran,
+                                                  cmin,cmax,maxlyr,modelfile)
 
     #plot model
     #rayleigh.plot_deck_model(modelfile)
 
     #plot dispersion curves
     parray = 1./modearray[2,:nmodes] #list of periods
-    pvarray = modearray[4,nmodes] #phase velocity (km/s)
-    gvarray = modearray[4,:nmodes] #group velocity (km/s)
+    phase_vel = modearray[3,:nmodes] #phase velocity (km/s)
+    group_vel = modearray[4,:nmodes] #group velocity (km/s)
     freq_mhz = (1./parray)*1000.0
 
     if i == 0:
         plt.plot(freq_mhz,group_vel,label='group velocity',color='blue')
         plt.plot(freq_mhz,phase_vel,label='phase_velocity',color='purple')
     else:
-        plt.plot(freq,group_vel,color='blue')
-        plt.plot(freq,phase_vel,color='purple')
+        plt.plot(freq_mhz,group_vel,color='blue')
+        plt.plot(freq_mhz,phase_vel,color='purple')
 
 plt.xlabel('frequency (mHz)')
 plt.ylabel('velocity (km/s)')
