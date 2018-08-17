@@ -7,7 +7,8 @@ cwd = os.getcwd()
 
 h2o_thickness = 1565000.0 - 1438875
 regolith_thickness = 2000.0
-ice_thicknesses = np.linspace(5000.0,60000.0,100)
+ice_thicknesses = np.linspace(5000.0,60000.0,10)
+#ice_thicknesses = np.linspace(50000.0,100000.0,100)
 
 for i,ice_thickness in enumerate(ice_thicknesses):
     print i,ice_thickness
@@ -24,8 +25,9 @@ for i,ice_thickness in enumerate(ice_thicknesses):
     dt=10.0
     npow=10
     fnyquist=0
-    nbran=0
+    nbran=0 #number of branches
     cmin=0.15
+    #cmin=0.1
     cmax=500.0
     maxlyr=1
     modelfile='testmod.deck'
@@ -44,11 +46,11 @@ for i,ice_thickness in enumerate(ice_thicknesses):
     freq_mhz = (1./parray)*1000.0
 
     if i == 0:
-        plt.plot(freq_mhz,group_vel,label='group velocity',color='blue')
-        plt.plot(freq_mhz,phase_vel,label='phase_velocity',color='purple')
+        plt.plot(freq_mhz,group_vel,label='group velocity',color='blue',alpha=0.5)
+        plt.plot(freq_mhz,phase_vel,label='phase_velocity',color='purple',alpha=0.5)
     else:
-        plt.plot(freq_mhz,group_vel,color='blue')
-        plt.plot(freq_mhz,phase_vel,color='purple')
+        plt.plot(freq_mhz,group_vel,color='blue',alpha=0.5)
+        plt.plot(freq_mhz,phase_vel,color='purple',alpha=0.5)
 
 plt.xlabel('frequency (mHz)')
 plt.ylabel('velocity (km/s)')
