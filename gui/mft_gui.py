@@ -64,6 +64,7 @@ class Window(QtGui.QMainWindow):
 
         #TODO move this eventually so it only gets plotted after MFT analysis
         self.plot_gabor()
+        self.plot_map()
    
     def on_open_sac_button_released(self):
         cwd = os.getcwd()
@@ -132,12 +133,33 @@ class Window(QtGui.QMainWindow):
         self.update()
 
     def on_calc_dispersion_button_released(self):
-        self.gabor_matrix = np.zeros((self.stream_slice.stats.npts,
-                                      self.stream_slice.stats.npts))
+        #self.gabor_matrix = np.zeros((self.stream_slice.stats.npts,
+                                      #self.stream_slice.stats.npts))
         #self.gabor_matrix[:,0] = self.stream_slice[0].data
-        for i in range(0,self.gabor_matrix.shape[0]):
-            self.gabor_matrix[i,:] = self.stream_slice.data 
+        #for i in range(0,self.gabor_matrix.shape[0]):
+        #    self.gabor_matrix[i,:] = self.stream_slice.data 
+        self.multiple_filter()
         self.update()
+
+    def multiple_filter(self,fmin=1/200.0,fmax=1/20.0,nbands=20):
+        bandwidth = 0.05 # TODO read literature about best filter bands
+        freqs = np.linspace(fmin,fmax,nbands)
+        envelopes = []
+        for freq in freqs:
+            freqmin = freq - (bandwidth/2.)
+            freqmax = freq + (bandwidth/2.)
+            self.stream_slice_copy = self.stream_slice.copy()
+
+            if freqmin > 0:
+                tr = self.stream_slice_copy.filter('bandpass',
+                    freqmin=freqmin,freqmax=freqmax,corners=2,
+                    zerophase=True)
+            else:
+                tr = self.stream_slice_copy.filter('lowpass',
+                    freq=freqmax)
+            data_envelope = obspy.signal.filter.envelope(tr.data)
+            envelopes.append(data_envelope)
+        self.gabor_matrix = np.array(envelopes)
 
     @property
     def mt_source(self):
@@ -387,7 +409,7 @@ class Window(QtGui.QMainWindow):
     def plot_gabor(self):
         self.mpl_gabor_figure = self.ui.gabormatrix.fig
         self.mpl_gabor_ax = self.mpl_gabor_figure.add_axes([0.1,0.1,0.8,0.6])
-        self.mpl_gabor_ax.imshow(self.gabor_matrix)
+        self.mpl_gabor_ax.imshow(self.gabor_matrix.T,aspect='auto')
         self.mpl_gabor_ax.set_xlabel('frequency (Hz)')
         self.mpl_gabor_ax.set_ylabel('velocity (km/s)')
         #self.mpl_gabor_figure.set_title('MFT analysis')
