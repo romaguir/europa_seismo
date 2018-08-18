@@ -2,6 +2,7 @@
 #from setuptools import setup
 import numpy as np
 from numpy.distutils.core import setup,Extension
+from setuptools import find_packages
 
 minos = Extension(name = 'europa_seismo.minos', sources = ['src/minos_bran.f'])
 rayleigh_python = Extension(name='europa_seismo.rayleigh_python',sources=['src/rayleigh_python.f', \
@@ -13,7 +14,7 @@ setup(name='europa_seismo',
       author='Ross Maguire',
       author_email='rmaguire@umd.edu',
       url='www.github.com/romaguir/europa_seismo',
-      packages=['europa_seismo'],
+      packages=find_packages(),
       install_requires=['pymc'],
       scripts=['bin/find_accel_max'],
       license='GNU',
