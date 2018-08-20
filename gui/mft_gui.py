@@ -42,7 +42,13 @@ class Window(QtGui.QMainWindow):
         self.window_start = None
         self.window_end = None
         self.gabor_matrix = np.zeros((100,100))
-        self.planet_radius = 6371.0
+
+        if self.ui.planet.currentText() == 'Earth':
+            self.planet_radius = 6371.0
+        elif self.ui.planet.currentText() == 'Mars':
+            self.planet_radius = 3385.5
+        elif self.ui.planet.currentText() == 'Europa':
+            self.planet_radius = 1565.0
         
         m_rr = 3.98E13
         m_tt = 0.0
@@ -418,6 +424,17 @@ class Window(QtGui.QMainWindow):
             float(self.ui.evla.value()),float(self.ui.evlo.value()),
             float(self.ui.stla.value()),float(self.ui.stlo.value())) 
             self.stream_copy = self.stream.copy()
+        self.update()
+
+    def on_planet_currentIndexChanged(self, *args):
+
+        if self.ui.planet.currentText() == 'Earth':
+            self.planet_radius = 6371.0
+        elif self.ui.planet.currentText() == 'Mars':
+            self.planet_radius = 3385.5
+        elif self.ui.planet.currentText() == 'Europa':
+            self.planet_radius = 1565.0
+        print self.planet_radius
         self.update()
 
     def on_window_start_valueChanged(self, *args):
