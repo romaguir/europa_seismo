@@ -7,14 +7,15 @@ cwd = os.getcwd()
 
 h2o_thickness = 1565000.0 - 1438875
 regolith_thickness = 2000.0
-ice_thicknesses = np.linspace(5000.0,60000.0,10)
+#ice_thicknesses = np.linspace(5000.0,60000.0,10)
+ice_thicknesses = np.linspace(5000.0,100000,10)
 
 for i,ice_thickness in enumerate(ice_thicknesses):
     print i,ice_thickness
 
     ocean_thickness = h2o_thickness - regolith_thickness - ice_thickness
     layers = rayleigh.make_layers_dict(regolith_thickness,ice_thickness,ocean_thickness,
-                                       vp_regolith=2000.,vs_regolith=1000.)
+                                       vp_regolith=4000.,vs_regolith=2000.)
 
     #write model
     rayleigh.write_deck_model(layers,output_model='testmod.deck',base_model=cwd+'/../data/'+'icehot_20km_simple.txt')

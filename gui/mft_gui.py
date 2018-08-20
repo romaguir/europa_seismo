@@ -57,6 +57,10 @@ class Window(QtGui.QMainWindow):
         self.ui.m_rp.setValue(m_rp)
         self.ui.m_tp.setValue(m_tp)
         self.ui.stlo.setValue(30.0)
+        self.ui.stla.setValue(0.0)
+        self.ui.evlo.setValue(0.0)
+        self.ui.evla.setValue(0.0)
+        self.ui.evdp.setValue(0.0)
         self.ui.window_start.setMinimum(0.0)
         self.ui.window_start.setMaximum(1.0)
         self.ui.window_start.setValue(0.0)
@@ -83,6 +87,11 @@ class Window(QtGui.QMainWindow):
         self.ui.window_start.setValue(time[0])
         self.ui.window_end.setValue(time[-1])
         self.instaseis = False
+        self.ui.stlo.setValue(self.stream[0].stats.sac['stlo'])
+        self.ui.stla.setValue(self.stream[0].stats.sac['stla'])
+        self.ui.evlo.setValue(self.stream[0].stats.sac['evlo'])
+        self.ui.evla.setValue(self.stream[0].stats.sac['evla'])
+        self.ui.evdp.setValue(self.stream[0].stats.sac['evdp'])
         self.update()
 
     def on_open_instaseis_button_released(self):
