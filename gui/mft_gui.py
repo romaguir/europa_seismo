@@ -163,18 +163,24 @@ class Window(QtGui.QMainWindow):
         self.plot_gabor()
         self.update()
 
-    def multiple_filter(self,fmin=1/200.0,fmax=1/20.0,nbands=20):
+    #def multiple_filter(self,fmin=1/200.0,fmax=1/20.0,nbands=20):
+    def multiple_filter(self,Tmin=20.0,Tmax=200.0,nbands=50):
         bandwidth = 0.10 # TODO read literature about best filter bands
-        freqs = np.linspace(fmin,fmax,nbands)
-        print freqs
-        print fmin,fmax
+        #freqs = np.linspace(fmin,fmax,nbands)
+        periods = np.linspace(Tmin,Tmax,nbands)
         envelopes = []
-        for freq in freqs:
+        #for freq in freqs:
+        for period in periods:
             #freqmin = freq - (bandwidth/2.)
             #freqmax = freq + (bandwidth/2.)
-            freqmin = freq - (freq / 2.)
-            freqmax = freq + (freq / 2.)
-            print freqmin,freqmax,1./freqmin,1./freqmax
+            Tstart = period / 2.0
+            Tend = period + (period / 2.0)
+            freqmin = 1. / Tend
+            freqmax = 1. / Tstart
+            print Tstart,Tend
+            #freqmin = freq - (freq / 2.)
+            #freqmax = freq + (freq / 2.)
+            #print freqmin,freqmax,1./freqmin,1./freqmax
             self.stream_slice_copy = self.stream_slice.copy()
 
             if freqmin > 0:
@@ -185,7 +191,10 @@ class Window(QtGui.QMainWindow):
                 tr = self.stream_slice_copy.filter('lowpass',
                     freq=freqmax)
             data_envelope = obspy.signal.filter.envelope(tr.data)
+            #plt.plot(tr.data,label=period)
             envelopes.append(data_envelope)
+        #plt.legend()
+        #plt.show()
         self.gabor_matrix = np.array(envelopes)
         self.update()
 
@@ -503,13 +512,20 @@ class Window(QtGui.QMainWindow):
             vel_min = dist_km / float(self.ui.window_start.value())
             vel_max = dist_km / float(self.ui.window_end.value())
 
-        extent = [(1/200.)*1000.0,(1/20.)*1000.,vel_max,vel_min]
-        self.mpl_gabor_ax.imshow(np.fliplr(self.gabor_matrix.T),
-            aspect='auto',extent=extent)
+        #extent = [(1/200.)*1000.0,(1/20.)*1000.,vel_max,vel_min]
+        extent = [20.,200.,vel_max,vel_min]
+        #self.mpl_gabor_ax.imshow(np.fliplr(self.gabor_matrix.T),
+        #    aspect='auto',extent=extent,cmap='jet')
+        self.mpl_gabor_ax.imshow(self.gabor_matrix.T,
+            aspect='auto',extent=extent,cmap='jet')
         #self.mpl_gabor_ax.imshow(np.rot90(self.gabor_matrix),
         #    aspect='auto',extent=extent)
-        self.mpl_gabor_ax.set_xlabel('frequency (mHz)')
+        #self.mpl_gabor_ax.set_xlabel('frequency (mHz)')
+        self.mpl_gabor_ax.set_xlabel('period (s)')
         self.mpl_gabor_ax.set_ylabel('velocity (km/s)')
+        xxx = np.loadtxt('/home/romaguir/Tools/mineos/python/premgrpvel.test')
+        self.mpl_gabor_ax.plot(xxx[:,0],xxx[:,1],c='k')
+        self.mpl_gabor_ax.set_xlim([20,200])
 
         self.mpl_gabor_figure.canvas.draw()
 
