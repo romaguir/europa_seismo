@@ -42,7 +42,13 @@ class Window(QtGui.QMainWindow):
         self.window_start = None
         self.window_end = None
         self.gabor_matrix = np.zeros((100,100))
-        self.planet_radius = 6371.0
+
+        if self.ui.planet.currentText() == 'Earth':
+            self.planet_radius = 6371.0
+        elif self.ui.planet.currentText() == 'Mars':
+            self.planet_radius = 3385.5
+        elif self.ui.planet.currentText() == 'Europa':
+            self.planet_radius = 1565.0
         
         m_rr = 3.98E13
         m_tt = 0.0
@@ -57,6 +63,10 @@ class Window(QtGui.QMainWindow):
         self.ui.m_rp.setValue(m_rp)
         self.ui.m_tp.setValue(m_tp)
         self.ui.stlo.setValue(30.0)
+        self.ui.stla.setValue(0.0)
+        self.ui.evlo.setValue(0.0)
+        self.ui.evla.setValue(0.0)
+        self.ui.evdp.setValue(0.0)
         self.ui.window_start.setMinimum(0.0)
         self.ui.window_start.setMaximum(1.0)
         self.ui.window_start.setValue(0.0)
@@ -83,6 +93,11 @@ class Window(QtGui.QMainWindow):
         self.ui.window_start.setValue(time[0])
         self.ui.window_end.setValue(time[-1])
         self.instaseis = False
+        self.ui.stlo.setValue(self.stream[0].stats.sac['stlo'])
+        self.ui.stla.setValue(self.stream[0].stats.sac['stla'])
+        self.ui.evlo.setValue(self.stream[0].stats.sac['evlo'])
+        self.ui.evla.setValue(self.stream[0].stats.sac['evla'])
+        self.ui.evdp.setValue(self.stream[0].stats.sac['evdp'])
         self.update()
 
     def on_open_instaseis_button_released(self):
@@ -148,18 +163,24 @@ class Window(QtGui.QMainWindow):
         self.plot_gabor()
         self.update()
 
-    def multiple_filter(self,fmin=1/200.0,fmax=1/20.0,nbands=20):
+    #def multiple_filter(self,fmin=1/200.0,fmax=1/20.0,nbands=20):
+    def multiple_filter(self,Tmin=20.0,Tmax=200.0,nbands=50):
         bandwidth = 0.10 # TODO read literature about best filter bands
-        freqs = np.linspace(fmin,fmax,nbands)
-        print freqs
-        print fmin,fmax
+        #freqs = np.linspace(fmin,fmax,nbands)
+        periods = np.linspace(Tmin,Tmax,nbands)
         envelopes = []
-        for freq in freqs:
+        #for freq in freqs:
+        for period in periods:
             #freqmin = freq - (bandwidth/2.)
             #freqmax = freq + (bandwidth/2.)
-            freqmin = freq - (freq / 2.)
-            freqmax = freq + (freq / 2.)
-            print freqmin,freqmax,1./freqmin,1./freqmax
+            Tstart = period / 2.0
+            Tend = period + (period / 2.0)
+            freqmin = 1. / Tend
+            freqmax = 1. / Tstart
+            print Tstart,Tend
+            #freqmin = freq - (freq / 2.)
+            #freqmax = freq + (freq / 2.)
+            #print freqmin,freqmax,1./freqmin,1./freqmax
             self.stream_slice_copy = self.stream_slice.copy()
 
             if freqmin > 0:
@@ -170,7 +191,10 @@ class Window(QtGui.QMainWindow):
                 tr = self.stream_slice_copy.filter('lowpass',
                     freq=freqmax)
             data_envelope = obspy.signal.filter.envelope(tr.data)
+            #plt.plot(tr.data,label=period)
             envelopes.append(data_envelope)
+        #plt.legend()
+        #plt.show()
         self.gabor_matrix = np.array(envelopes)
         self.update()
 
@@ -411,6 +435,17 @@ class Window(QtGui.QMainWindow):
             self.stream_copy = self.stream.copy()
         self.update()
 
+    def on_planet_currentIndexChanged(self, *args):
+
+        if self.ui.planet.currentText() == 'Earth':
+            self.planet_radius = 6371.0
+        elif self.ui.planet.currentText() == 'Mars':
+            self.planet_radius = 3385.5
+        elif self.ui.planet.currentText() == 'Europa':
+            self.planet_radius = 1565.0
+        print self.planet_radius
+        self.update()
+
     def on_window_start_valueChanged(self, *args):
         t_start = float(self.ui.window_start.value())
         t_end = float(self.ui.window_end.value())
@@ -477,13 +512,20 @@ class Window(QtGui.QMainWindow):
             vel_min = dist_km / float(self.ui.window_start.value())
             vel_max = dist_km / float(self.ui.window_end.value())
 
-        extent = [(1/200.)*1000.0,(1/20.)*1000.,vel_max,vel_min]
-        self.mpl_gabor_ax.imshow(np.fliplr(self.gabor_matrix.T),
-            aspect='auto',extent=extent)
+        #extent = [(1/200.)*1000.0,(1/20.)*1000.,vel_max,vel_min]
+        extent = [20.,200.,vel_max,vel_min]
+        #self.mpl_gabor_ax.imshow(np.fliplr(self.gabor_matrix.T),
+        #    aspect='auto',extent=extent,cmap='jet')
+        self.mpl_gabor_ax.imshow(self.gabor_matrix.T,
+            aspect='auto',extent=extent,cmap='jet')
         #self.mpl_gabor_ax.imshow(np.rot90(self.gabor_matrix),
         #    aspect='auto',extent=extent)
-        self.mpl_gabor_ax.set_xlabel('frequency (mHz)')
+        #self.mpl_gabor_ax.set_xlabel('frequency (mHz)')
+        self.mpl_gabor_ax.set_xlabel('period (s)')
         self.mpl_gabor_ax.set_ylabel('velocity (km/s)')
+        xxx = np.loadtxt('/home/romaguir/Tools/mineos/python/premgrpvel.test')
+        self.mpl_gabor_ax.plot(xxx[:,0],xxx[:,1],c='k')
+        self.mpl_gabor_ax.set_xlim([20,200])
 
         self.mpl_gabor_figure.canvas.draw()
 
