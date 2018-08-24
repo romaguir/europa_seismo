@@ -40,8 +40,11 @@ class Window(QtGui.QMainWindow):
         self.source = None
         self.window_start = None
         self.window_end = None
-        self.gabor_matrix = np.zeros((100,100))
-        self.periods = np.linspace(5,100,100)
+        self.nbands = 100
+        self.gabor_matrix = np.zeros((self.nbands,self.nbands))
+        self.periods = np.linspace(self.ui.min_period.value(),
+                                   self.ui.max_period.value(),
+                                   self.nbands)
         self.period_pick = None
         self.vel_pick = None
         self.dist_km = None
@@ -167,8 +170,7 @@ class Window(QtGui.QMainWindow):
         self.plot_gabor()
         self.update()
 
-    def multiple_filter(self,Tmin=20.0,Tmax=200.0,nbands=50,
-                        kind='gaussian',alpha=100.):
+    def multiple_filter(self,Tmin=20.0,Tmax=200.0):
         #time = self.get_time_axis
         self.km_per_deg = (2.*np.pi*self.planet_radius / 360.0)
         self.dist_km = self.stream[0].stats.sac['gcarc'] * self.km_per_deg
@@ -180,18 +182,18 @@ class Window(QtGui.QMainWindow):
         except TypeError:
             time = np.linspace(100,200,100)
 
-        self.periods = np.linspace(Tmin,Tmax,nbands)
+        #self.periods = np.linspace(Tmin,Tmax,nbands)
         self.gabor_matrix = np.zeros((len(self.time_window),len(self.periods))) 
         print 'GABOR MATRIX SHAPE', self.gabor_matrix.shape
         self.period_pick = []
         self.vel_pick = []
 
-        if kind == 'gaussian':
+        if self.ui.mft_type.currentText() == 'gaussian':
             for i,period in enumerate(self.periods):
                 self.stream_slice_copy = self.stream_slice.copy()
                 tr = self.stream_slice_copy
                 dcol = gauss_filter(tr.data,tr.stats.sampling_rate,
-                    w_0=(1/period),alpha=alpha)
+                    w_0=(1/period),alpha=self.ui.alpha.value())
                 env = np.abs(hilbert(dcol.real))
                 self.gabor_matrix[:,i] = env
 
@@ -199,9 +201,9 @@ class Window(QtGui.QMainWindow):
                     self.vel_pick.append(self.dist_km/self.time_window[np.argmax(env)])
                     self.period_pick.append(period)
 
-        elif kind == 'butterworth':
+        elif self.ui.mft_type.currentText() == 'butterworth':
             for i,period in enumerate(self.periods):
-                Tstart = period / 2.0
+                Tstart = period / 1.2
                 Tend = period + (period / 2.0)
                 freqmin = 1. / Tend
                 freqmax = 1. / Tstart
@@ -217,7 +219,7 @@ class Window(QtGui.QMainWindow):
 
                 dcol = tr.data
                 env = np.abs(hilbert(dcol.real))
-                gabor_matrix[:,i] = env
+                self.gabor_matrix[:,i] = env
 
                 if np.max(env) > 0.0:
                     self.vel_pick.append(self.dist_km/self.time_window[np.argmax(env)])
@@ -250,10 +252,8 @@ class Window(QtGui.QMainWindow):
     def instaseis_receiver(self):
         longitude=float(self.ui.stlo.value())
         latitude=float(self.ui.stla.value())
-        depth=float(self.ui.evdp.value())
         rec = instaseis.Receiver(latitude=latitude,
-                                 longitude=longitude,
-                                 depth_in_m=depth*1000.0)
+                                 longitude=longitude)
         return rec
 
     @property
@@ -447,6 +447,18 @@ class Window(QtGui.QMainWindow):
             self.stream_copy = self.stream.copy()
         self.update()
 
+    def on_min_period_valueChanged(self, *args):
+        self.periods=np.linspace(self.ui.min_period.value(),
+                                 self.ui.max_period.value(),
+                                 self.nbands)
+        self.update()
+
+    def on_max_period_valueChanged(self, *args):
+        self.periods=np.linspace(self.ui.min_period.value(),
+                                 self.ui.max_period.value(),
+                                 self.nbands)
+        self.update()
+
     def on_component_currentIndexChanged(self, *args):
         if self.instaseis:
             src = self.mt_source
@@ -462,6 +474,9 @@ class Window(QtGui.QMainWindow):
             float(self.ui.evla.value()),float(self.ui.evlo.value()),
             float(self.ui.stla.value()),float(self.ui.stlo.value())) 
             self.stream_copy = self.stream.copy()
+        self.update()
+
+    def on_mft_type_currentIndexChanged(self, *args):
         self.update()
 
     def on_planet_currentIndexChanged(self, *args):
@@ -491,6 +506,9 @@ class Window(QtGui.QMainWindow):
             self.stream[0].stats.starttime + t_start,
             self.stream[0].stats.starttime + t_end)
         self.stream = self.stream_copy
+        self.update()
+
+    def on_alpha_valueChanged(self, *args):
         self.update()
 
     def update(self, force=False):
@@ -535,8 +553,6 @@ class Window(QtGui.QMainWindow):
 
         self.mpl_gabor_figure = self.ui.gabormatrix.fig
         self.mpl_gabor_ax = self.mpl_gabor_figure.add_axes([0.1,0.1,0.8,0.6])
-        vel_min = 2.0
-        vel_max = 5.0
 
         if self.stream is not None:
             self.km_per_deg = (2.*np.pi*self.planet_radius / 360.0)
@@ -558,8 +574,13 @@ class Window(QtGui.QMainWindow):
             self.mpl_gabor_ax.scatter(self.period_pick,self.vel_pick,
                                       c='k',marker='+')
 
-        ftest = np.loadtxt('/home/romaguir/Tools/europa_seismo/data/prem_grpvel_minos.txt')
-        self.mpl_gabor_ax.plot(ftest[:,0],ftest[:,1],c='k',alpha=0.75)
+        veloc = self.dist_km / self.time_window
+        #ftest = np.loadtxt('/home/romaguir/Tools/europa_seismo/data/prem_grpvel_minos.txt')
+        #self.mpl_gabor_ax.plot(ftest[:,0],ftest[:,1],c='k',alpha=0.75)
+        self.mpl_gabor_ax.set_xlim([self.ui.min_period.value(),self.ui.max_period.value()])
+        self.mpl_gabor_ax.set_ylim([np.min(veloc),min(5,np.max(veloc))])
+        self.mpl_gabor_ax.set_xlabel('period (s)')
+        self.mpl_gabor_ax.set_ylabel('velocity (km/s)')
         self.mpl_gabor_figure.canvas.draw()
 
 #borrowed from instaseis gui... still learning how this works

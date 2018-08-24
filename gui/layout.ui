@@ -137,7 +137,7 @@
            </layout>
           </item>
           <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="min_period">
+           <widget class="QDoubleSpinBox" name="prefilter_min_period">
             <property name="maximum">
              <double>500.000000000000000</double>
             </property>
@@ -156,7 +156,7 @@
           <item row="1" column="0">
            <widget class="QLabel" name="label_13">
             <property name="text">
-             <string>filter properties</string>
+             <string>pre filter properties</string>
             </property>
            </widget>
           </item>
@@ -194,7 +194,7 @@
            </layout>
           </item>
           <item row="3" column="1">
-           <widget class="QDoubleSpinBox" name="max_period">
+           <widget class="QDoubleSpinBox" name="prefilter_max_period">
             <property name="minimum">
              <double>1.000000000000000</double>
             </property>
@@ -419,7 +419,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,1,0,0,2">
           <item>
            <widget class="QSlider" name="window_start">
             <property name="maximum">
@@ -461,6 +461,91 @@
              <string>Calculate Dispersion</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,2,1,2,2,2,2,2">
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_19">
+              <property name="text">
+               <string>Tmin</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="ScientificDoubleSpinBox" name="max_period">
+              <property name="minimum">
+               <double>5.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>500.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>150.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLabel" name="label_20">
+              <property name="text">
+               <string>Tmax</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="6">
+             <widget class="QLabel" name="label_18">
+              <property name="text">
+               <string>alpha</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="ScientificDoubleSpinBox" name="min_period">
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>20.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="4">
+             <widget class="Line" name="line_6">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="7">
+             <widget class="ScientificDoubleSpinBox" name="alpha">
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>500.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>100.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="5">
+             <widget class="QComboBox" name="mft_type">
+              <item>
+               <property name="text">
+                <string>gaussian</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>butterworth</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="Qt4MplCanvas" name="gabormatrix"/>
