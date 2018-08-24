@@ -583,6 +583,9 @@ class Window(QtGui.QMainWindow):
         self.mpl_gabor_ax.set_ylabel('velocity (km/s)')
         self.mpl_gabor_figure.canvas.draw()
 
+    def on_Save_dispersion_curve_triggered(self, *args):
+        np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
+
 #borrowed from instaseis gui... still learning how this works
 def use_ui_layout():
     DIR = os.path.dirname(os.path.abspath(__file__)) 

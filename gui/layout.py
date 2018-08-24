@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/rossmaguire/Tools/europa_seismo/gui/layout.ui'
+# Form implementation generated from reading ui file '/home/romaguir/Tools/europa_seismo/gui/layout.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -333,8 +333,11 @@ class Ui_MainWindow(object):
         self.actionOpen_sac_file.setObjectName(_fromUtf8("actionOpen_sac_file"))
         self.actionExit = QtGui.QAction(MainWindow)
         self.actionExit.setObjectName(_fromUtf8("actionExit"))
+        self.Save_dispersion_curve = QtGui.QAction(MainWindow)
+        self.Save_dispersion_curve.setObjectName(_fromUtf8("Save_dispersion_curve"))
         self.menuFile.addAction(self.actionOpen_sac_file)
         self.menuFile.addAction(self.actionExit)
+        self.menuFile.addAction(self.Save_dispersion_curve)
         self.menubar.addAction(self.menuFile.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -384,6 +387,7 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.actionOpen_sac_file.setText(_translate("MainWindow", "Open", None))
         self.actionExit.setText(_translate("MainWindow", "Exit", None))
+        self.Save_dispersion_curve.setText(_translate("MainWindow", "Save Dispersion Curve As", None))
 
 from instaseis.gui.qt4mplcanvas import Qt4MplCanvas
 from instaseis.gui.scientific_double_spin_box import ScientificDoubleSpinBox
