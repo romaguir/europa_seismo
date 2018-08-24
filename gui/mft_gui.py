@@ -586,6 +586,9 @@ class Window(QtGui.QMainWindow):
     def on_Save_dispersion_curve_triggered(self, *args):
         np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
 
+    def on_save_disp_button_released(self, *args):
+        np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
+
 #borrowed from instaseis gui... still learning how this works
 def use_ui_layout():
     DIR = os.path.dirname(os.path.abspath(__file__)) 
