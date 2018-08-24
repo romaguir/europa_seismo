@@ -154,6 +154,11 @@ class Window(QtGui.QMainWindow):
     
         self.update()
 
+    def on_press_me_button_released(self):
+        print 'the button was pressed'
+        np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
+        self.update()
+
     def on_differentiate_button_released(self):
         if not self.stream:
             return
@@ -226,6 +231,8 @@ class Window(QtGui.QMainWindow):
                     self.period_pick.append(period)
         else:
             raise ValueError('filter type',kind,' not implemented')
+
+        np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
 
         self.update()
 
@@ -584,9 +591,6 @@ class Window(QtGui.QMainWindow):
         self.mpl_gabor_figure.canvas.draw()
 
     def on_Save_dispersion_curve_triggered(self, *args):
-        np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
-
-    def on_save_disp_button_released(self, *args):
         np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
 
 #borrowed from instaseis gui... still learning how this works

@@ -546,9 +546,9 @@
              </widget>
             </item>
             <item row="1" column="8">
-             <widget class="QPushButton" name="save_disp">
+             <widget class="QPushButton" name="press_me">
               <property name="text">
-               <string>save</string>
+               <string>press_me</string>
               </property>
              </widget>
             </item>
