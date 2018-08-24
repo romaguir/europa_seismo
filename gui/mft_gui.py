@@ -4,9 +4,6 @@
 """
 gui for dispersion measurement with the 
 multiple frequency technique (Dziewonski, 1969)
-
-Some of this code was copied and pasted from 
-the instaseis gui written by Lion Krischer
 """
 
 import os
@@ -18,6 +15,7 @@ import instaseis
 import numpy as np
 import pyqtgraph as pg
 import matplotlib.pyplot as plt
+from scipy.signal import hilbert
 from PyQt4 import uic
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QVBoxLayout
@@ -25,6 +23,7 @@ from obspy import geodetics
 from mpl_toolkits.basemap import Basemap
 from glob import iglob
 from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationToolbar
+from europa_seismo.europa_seismo.utils import gauss_filter
 
 class Window(QtGui.QMainWindow):
 
@@ -42,6 +41,10 @@ class Window(QtGui.QMainWindow):
         self.window_start = None
         self.window_end = None
         self.gabor_matrix = np.zeros((100,100))
+        self.periods = np.linspace(5,100,100)
+        self.period_pick = None
+        self.vel_pick = None
+        self.dist_km = None
 
         if self.ui.planet.currentText() == 'Earth':
             self.planet_radius = 6371.0
@@ -75,7 +78,7 @@ class Window(QtGui.QMainWindow):
         self.ui.window_end.setValue(1.0)
 
         #TODO move this eventually so it only gets plotted after MFT analysis
-        self.plot_gabor()
+        #self.plot_gabor()
         self.plot_map()
    
     def on_open_sac_button_released(self):
@@ -87,7 +90,7 @@ class Window(QtGui.QMainWindow):
 
         self.stream = obspy.read(self.sac_file)
         self.stream_copy = self.stream.copy()
-        time = self.get_time_axis
+        time = self.get_time_axis 
         self.ui.window_start.setMaximum(time[-1])
         self.ui.window_end.setMaximum(time[-1])
         self.ui.window_start.setValue(time[0])
@@ -98,6 +101,7 @@ class Window(QtGui.QMainWindow):
         self.ui.evlo.setValue(self.stream[0].stats.sac['evlo'])
         self.ui.evla.setValue(self.stream[0].stats.sac['evla'])
         self.ui.evdp.setValue(self.stream[0].stats.sac['evdp'])
+        self.time_window = None
         self.update()
 
     def on_open_instaseis_button_released(self):
@@ -163,39 +167,64 @@ class Window(QtGui.QMainWindow):
         self.plot_gabor()
         self.update()
 
-    #def multiple_filter(self,fmin=1/200.0,fmax=1/20.0,nbands=20):
-    def multiple_filter(self,Tmin=20.0,Tmax=200.0,nbands=50):
-        bandwidth = 0.10 # TODO read literature about best filter bands
-        #freqs = np.linspace(fmin,fmax,nbands)
-        periods = np.linspace(Tmin,Tmax,nbands)
-        envelopes = []
-        #for freq in freqs:
-        for period in periods:
-            #freqmin = freq - (bandwidth/2.)
-            #freqmax = freq + (bandwidth/2.)
-            Tstart = period / 2.0
-            Tend = period + (period / 2.0)
-            freqmin = 1. / Tend
-            freqmax = 1. / Tstart
-            print Tstart,Tend
-            #freqmin = freq - (freq / 2.)
-            #freqmax = freq + (freq / 2.)
-            #print freqmin,freqmax,1./freqmin,1./freqmax
-            self.stream_slice_copy = self.stream_slice.copy()
+    def multiple_filter(self,Tmin=20.0,Tmax=200.0,nbands=50,
+                        kind='gaussian',alpha=100.):
+        #time = self.get_time_axis
+        self.km_per_deg = (2.*np.pi*self.planet_radius / 360.0)
+        self.dist_km = self.stream[0].stats.sac['gcarc'] * self.km_per_deg
 
-            if freqmin > 0:
-                tr = self.stream_slice_copy.filter('bandpass',
-                    freqmin=freqmin,freqmax=freqmax,corners=2,
-                    zerophase=True)
-            else:
-                tr = self.stream_slice_copy.filter('lowpass',
-                    freq=freqmax)
-            data_envelope = obspy.signal.filter.envelope(tr.data)
-            #plt.plot(tr.data,label=period)
-            envelopes.append(data_envelope)
-        #plt.legend()
-        #plt.show()
-        self.gabor_matrix = np.array(envelopes)
+        try:
+            self.time_window = np.linspace(self.ui.window_start.value(),
+                                           self.ui.window_end.value(),
+                                           len(self.stream_slice.data))
+        except TypeError:
+            time = np.linspace(100,200,100)
+
+        self.periods = np.linspace(Tmin,Tmax,nbands)
+        self.gabor_matrix = np.zeros((len(self.time_window),len(self.periods))) 
+        print 'GABOR MATRIX SHAPE', self.gabor_matrix.shape
+        self.period_pick = []
+        self.vel_pick = []
+
+        if kind == 'gaussian':
+            for i,period in enumerate(self.periods):
+                self.stream_slice_copy = self.stream_slice.copy()
+                tr = self.stream_slice_copy
+                dcol = gauss_filter(tr.data,tr.stats.sampling_rate,
+                    w_0=(1/period),alpha=alpha)
+                env = np.abs(hilbert(dcol.real))
+                self.gabor_matrix[:,i] = env
+
+                if np.max(env) > 0.0:
+                    self.vel_pick.append(self.dist_km/self.time_window[np.argmax(env)])
+                    self.period_pick.append(period)
+
+        elif kind == 'butterworth':
+            for i,period in enumerate(self.periods):
+                Tstart = period / 2.0
+                Tend = period + (period / 2.0)
+                freqmin = 1. / Tend
+                freqmax = 1. / Tstart
+                self.stream_slice_copy = self.stream_slice.copy()
+
+                if freqmin > 0:
+                    tr = self.stream_slice_copy.filter('bandpass',
+                        freqmin=freqmin,freqmax=freqmax,corners=4,
+                        zerophase=True)
+                else:
+                    tr = self.stream_slice_copy.filter('lowpass',
+                        freq=freqmax)
+
+                dcol = tr.data
+                env = np.abs(hilbert(dcol.real))
+                gabor_matrix[:,i] = env
+
+                if np.max(env) > 0.0:
+                    self.vel_pick.append(self.dist_km/self.time_window[np.argmax(env)])
+                    self.period_pick.append(period)
+        else:
+            raise ValueError('filter type',kind,' not implemented')
+
         self.update()
 
     @property
@@ -501,32 +530,36 @@ class Window(QtGui.QMainWindow):
 
     def plot_gabor(self):
 
+        if hasattr(self,'mpl_gabor_ax'):
+            self.mpl_gabor_ax.clear()
+
         self.mpl_gabor_figure = self.ui.gabormatrix.fig
         self.mpl_gabor_ax = self.mpl_gabor_figure.add_axes([0.1,0.1,0.8,0.6])
         vel_min = 2.0
         vel_max = 5.0
 
         if self.stream is not None:
-            km_per_deg = (2.*np.pi*self.planet_radius / 360.0)
-            dist_km = self.stream[0].stats.sac['gcarc'] * km_per_deg
-            vel_min = dist_km / float(self.ui.window_start.value())
-            vel_max = dist_km / float(self.ui.window_end.value())
+            self.km_per_deg = (2.*np.pi*self.planet_radius / 360.0)
+            self.dist_km = self.stream[0].stats.sac['gcarc'] * self.km_per_deg
+            vel_min = self.dist_km / float(self.ui.window_start.value())
+            vel_max = self.dist_km / float(self.ui.window_end.value())
 
-        #extent = [(1/200.)*1000.0,(1/20.)*1000.,vel_max,vel_min]
-        extent = [20.,200.,vel_max,vel_min]
-        #self.mpl_gabor_ax.imshow(np.fliplr(self.gabor_matrix.T),
+        #extent = [20.,200.,vel_max,vel_min]
+        #self.mpl_gabor_ax.imshow(self.gabor_matrix.T,
         #    aspect='auto',extent=extent,cmap='jet')
-        self.mpl_gabor_ax.imshow(self.gabor_matrix.T,
-            aspect='auto',extent=extent,cmap='jet')
-        #self.mpl_gabor_ax.imshow(np.rot90(self.gabor_matrix),
-        #    aspect='auto',extent=extent)
-        #self.mpl_gabor_ax.set_xlabel('frequency (mHz)')
-        self.mpl_gabor_ax.set_xlabel('period (s)')
-        self.mpl_gabor_ax.set_ylabel('velocity (km/s)')
-        xxx = np.loadtxt('/home/romaguir/Tools/mineos/python/premgrpvel.test')
-        self.mpl_gabor_ax.plot(xxx[:,0],xxx[:,1],c='k')
-        self.mpl_gabor_ax.set_xlim([20,200])
+        #self.mpl_gabor_ax.set_xlabel('period (s)')
+        #self.mpl_gabor_ax.set_ylabel('velocity (km/s)')
 
+        self.gabor_matrix /= np.max(self.gabor_matrix)
+        self.mpl_gabor_ax.contourf(self.periods,self.dist_km/self.time_window,self.gabor_matrix,
+                                   cmap='jet',levels=np.linspace(0,1,50))
+
+        if self.vel_pick is not None:
+            self.mpl_gabor_ax.scatter(self.period_pick,self.vel_pick,
+                                      c='k',marker='+')
+
+        ftest = np.loadtxt('/home/romaguir/Tools/europa_seismo/data/prem_grpvel_minos.txt')
+        self.mpl_gabor_ax.plot(ftest[:,0],ftest[:,1],c='k',alpha=0.75)
         self.mpl_gabor_figure.canvas.draw()
 
 #borrowed from instaseis gui... still learning how this works

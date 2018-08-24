@@ -81,3 +81,24 @@ def phase_window(data,evdp,gcarc,sampling_rate,phase,
     window_end_idx = phase_idx + int(window_end*sampling_rate)
 
     return data[window_start_idx:window_end_idx]
+
+def gauss_filter(data,sampling_rate,w_0,alpha,return_filter=False):
+    F_data = np.fft.fft(data)
+    freqs = np.fft.fftfreq(len(data),d = 1/sampling_rate)
+    F_filter = np.zeros(len(F_data))
+    for i in range(0,len(freqs)):
+        if freqs[i] > 0.0:
+            fact = -alpha*((freqs[i]-w_0)/(freqs[i]))**2
+            F_filter[i] = np.exp(fact)
+    nfreqs = len(freqs)
+
+    #remove negative frequencies
+    F_data[int(nfreqs/2):] = 0
+    F_filter[int(nfreqs/2):] = 0
+    
+    F_filtered = F_filter * F_data
+    data_filtered = np.fft.ifft(F_filtered)
+    if return_filter == False:
+        return data_filtered
+    else:
+        return data_filtered,F_filter[0:int(nfreqs/2)]
