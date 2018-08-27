@@ -18,7 +18,7 @@ for i,ice_thickness in enumerate(ice_thicknesses):
                                        vp_regolith=4000.,vs_regolith=2000.)
 
     #write model
-    rayleigh.write_deck_model(layers,output_model='testmod.deck',base_model=cwd+'/../data/'+'icehot_20km_simple.txt')
+    rayleigh.write_deck_model(layers,output_model='testmod.deck',base_model=cwd+'/../data/models/'+'icehot_20km_simple.txt')
 
     #run model
     modesfile='modes.out'

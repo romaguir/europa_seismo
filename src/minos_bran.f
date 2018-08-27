@@ -402,7 +402,7 @@ c		include writing egfcns (mhr)
      +  fl1,fl2,fl3,sfl3,jcom,nord,l,kg,kount,knsw,ifanis,iback
       common/eifx/vpv(mk),vph(mk),vsv(mk),vsh(mk),eta(mk),wrk(mk*10)
       common/rindx/nic,noc,nsl,nicp1,nocp1,nslp1,n
-      data bigg,tau/6.6723d-11,1.d3/,rhobar/5515.d0/
+      data bigg,tau/6.6723d-11,1.d3/,rhobar/3010.d0/
       pi=3.14159265358979d0
       read(iin,100) (ititle(i),i=1,20)
   100 format(20a4)
@@ -485,7 +485,9 @@ c  905   format(3x,i3,f12.1,5f12.2,f12.5,2f12.2)
 c      end if
 c*** normalise and spline ***
       rn=r(n)
+      print*, 'RN is', rn
       gn=pi*bigg*rhobar*rn
+      print*, 'GN is', gn
       vn2=gn*rn
       vn=sqrt(vn2)
       wn=vn/rn
