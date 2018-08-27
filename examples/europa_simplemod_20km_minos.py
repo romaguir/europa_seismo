@@ -16,12 +16,12 @@ wmax=100.0 #10 s period
 nmin=0.0
 nmax=0.0
 
-modelfile='../data/models/icehot_20km_simple.txt'
-#modelfile='./testmod.deck'
+#modelfile='../data/models/icehot_20km_simple.txt'
+modelfile='testmod.deck'
 minos.main(modelfile,modesfile,eigfile,eps,wgrav,jcom,lmin,lmax,wmin,wmax,nmin,nmax)
 
 #plot model
-#rayleigh.plot_deck_model(modelfile)
+rayleigh.plot_deck_model(modelfile)
 
 #plot dispersion curves
 f = np.genfromtxt('modes.out')

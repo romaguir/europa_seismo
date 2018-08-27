@@ -8,7 +8,8 @@ cwd = os.getcwd()
 h2o_thickness = 1565000.0 - 1438875
 regolith_thickness = 2000.0
 #ice_thicknesses = np.linspace(5000.0,60000.0,10)
-ice_thicknesses = np.linspace(5000.0,100000,10)
+#ice_thicknesses = np.linspace(5000.0,100000,10)
+ice_thicknesses = [5000]
 
 for i,ice_thickness in enumerate(ice_thicknesses):
     print i,ice_thickness
@@ -37,7 +38,7 @@ for i,ice_thickness in enumerate(ice_thicknesses):
     minos.main(modelfile,modesfile,eigfile,eps,wgrav,jcom,lmin,lmax,wmin,wmax,nmin,nmax)
 
     #plot model
-    #rayleigh.plot_deck_model(modelfile)
+    rayleigh.plot_deck_model(modelfile)
 
     #plot dispersion curves
     f = np.genfromtxt('modes.out')
