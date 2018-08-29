@@ -10,7 +10,6 @@ cwd = os.getcwd()
 h2o_thickness = 1565000.0 - 1438875
 regolith_thickness = 2000.0
 ice_thicknesses = np.linspace(3000.0,48000.0,10)
-#ice_thicknesses = np.linspace(50000.0,100000.0,100)
 
 #setup colors
 viridis = plt.get_cmap('viridis')
@@ -37,7 +36,7 @@ for i,ice_thickness in enumerate(ice_thicknesses):
     rayleigh.write_deck_model(layers,output_model='testmod.deck',base_model=cwd+'/../data/models/'+'icehot_20km_simple.txt')
 
     #run model
-    eps=1e-10     #1e-10
+    eps=1e-12     #1e-10
     dt=5.0        #10.0
     npow=10
     fnyquist=0
@@ -47,7 +46,6 @@ for i,ice_thickness in enumerate(ice_thicknesses):
     cmax=500.0
     maxlyr=1
     modelfile='testmod.deck'
-    #modelfile='../data/models/icehot_20km_simple.txt'
 
     #run model
     (modearray,nmodes) = rayleigh_python.rayleigh(eps,npow,dt,fnyquist,nbran,

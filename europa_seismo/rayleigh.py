@@ -67,11 +67,12 @@ def make_layers_dict(regolith_thickness,ice_thickness,ocean_thickness,**kwargs):
 def write_deck_model(layers_dict,output_model,base_model,**kwargs):
 
     #read base model
+    pts_in_layer = 30
     vals_arr,indices = read_deck_model(base_model)
     nic = indices[1]
-    noc = nic + 2
-    ncr = nic + 4
-    nlayers = nic + 6
+    noc = nic + 2 + (pts_in_layer) - 1
+    ncr = nic + 4 + (pts_in_layer * 2) - 2
+    nlayers = nic + 6 + (pts_in_layer * 3) - 3
 
     #write header
     f = open(output_model,'w')
@@ -82,25 +83,28 @@ def write_deck_model(layers_dict,output_model,base_model,**kwargs):
 
     #write core and mantle model (i.e. to start of ocean)
     #fmt='%10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f'
-    fmt='%10.2f '*9
+    #fmt='%10.2f '*9
+    fmt = '%8.0f%9.2f%9.2f%9.2f%9.1f%9.1f%9.2f%9.2f%9.5f' 
     np.savetxt(f, vals_arr[0:nic], fmt=fmt)
 
     #append ocean, ice, and regolith layer on top of the mantle
-    fmt='{:>10.2f} '*9
+    fmt = '{:8.0f}{:9.2f}{:9.2f}{:9.2f}{:9.1f}{:9.1f}{:9.2f}{:9.2f}{:9.5f}' 
+    #fmt='{:>10.2f} '*9
     ric = vals_arr[:,0][nic]
     roc = ric + layers_dict['ocean']['thickness']
     rcr = roc + layers_dict['ice']['thickness']
     rplanet = rcr + layers_dict['regolith']['thickness']
 
-    f.write(fmt.format(ric,
-                       layers_dict['ocean']['rho'],
-                       layers_dict['ocean']['vp'],
-                       layers_dict['ocean']['vs'],
-                       layers_dict['ocean']['Qkappa'],
-                       layers_dict['ocean']['Qmu'],
-                       layers_dict['ocean']['vp'],
-                       layers_dict['ocean']['vs'],
-                       layers_dict['ocean']['eta'])+'\n')
+    for i in range(0,pts_in_layer):
+        f.write(fmt.format(ric + (i*((roc-ric)/pts_in_layer)),
+                           layers_dict['ocean']['rho'],
+                           layers_dict['ocean']['vp'],
+                           layers_dict['ocean']['vs'],
+                           layers_dict['ocean']['Qkappa'],
+                           layers_dict['ocean']['Qmu'],
+                           layers_dict['ocean']['vp'],
+                           layers_dict['ocean']['vs'],
+                           layers_dict['ocean']['eta'])+'\n')
     f.write(fmt.format(roc,
                        layers_dict['ocean']['rho'],
                        layers_dict['ocean']['vp'],
@@ -110,15 +114,17 @@ def write_deck_model(layers_dict,output_model,base_model,**kwargs):
                        layers_dict['ocean']['vp'],
                        layers_dict['ocean']['vs'],
                        layers_dict['ocean']['eta'])+'\n')
-    f.write(fmt.format(roc,
-                       layers_dict['ice']['rho'],
-                       layers_dict['ice']['vp'],
-                       layers_dict['ice']['vs'],
-                       layers_dict['ice']['Qkappa'],
-                       layers_dict['ice']['Qmu'],
-                       layers_dict['ice']['vp'],
-                       layers_dict['ice']['vs'],
-                       layers_dict['ice']['eta'])+'\n')
+
+    for i in range(0,pts_in_layer):
+        f.write(fmt.format(roc + (i*((rcr-roc)/pts_in_layer)),
+                           layers_dict['ice']['rho'],
+                           layers_dict['ice']['vp'],
+                           layers_dict['ice']['vs'],
+                           layers_dict['ice']['Qkappa'],
+                           layers_dict['ice']['Qmu'],
+                           layers_dict['ice']['vp'],
+                           layers_dict['ice']['vs'],
+                           layers_dict['ice']['eta'])+'\n')
     f.write(fmt.format(rcr,
                        layers_dict['ice']['rho'],
                        layers_dict['ice']['vp'],
@@ -128,15 +134,16 @@ def write_deck_model(layers_dict,output_model,base_model,**kwargs):
                        layers_dict['ice']['vp'],
                        layers_dict['ice']['vs'],
                        layers_dict['ice']['eta'])+'\n')
-    f.write(fmt.format(rcr,
-                       layers_dict['regolith']['rho'],
-                       layers_dict['regolith']['vp'],
-                       layers_dict['regolith']['vs'],
-                       layers_dict['regolith']['Qkappa'],
-                       layers_dict['regolith']['Qmu'],
-                       layers_dict['regolith']['vp'],
-                       layers_dict['regolith']['vs'],
-                       layers_dict['regolith']['eta'])+'\n')
+    for i in range(0,pts_in_layer):
+        f.write(fmt.format(rcr + (i*((rplanet-rcr)/pts_in_layer)),
+                           layers_dict['regolith']['rho'],
+                           layers_dict['regolith']['vp'],
+                           layers_dict['regolith']['vs'],
+                           layers_dict['regolith']['Qkappa'],
+                           layers_dict['regolith']['Qmu'],
+                           layers_dict['regolith']['vp'],
+                           layers_dict['regolith']['vs'],
+                           layers_dict['regolith']['eta'])+'\n')
     f.write(fmt.format(rplanet,
                        layers_dict['regolith']['rho'],
                        layers_dict['regolith']['vp'],

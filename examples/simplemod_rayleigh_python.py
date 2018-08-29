@@ -17,7 +17,7 @@ cmin=0.135
 cmax=500.0
 maxlyr=1.0
 #modelfile='../data/models/icehot_20km_simple.txt'
-modelfile='ice20.deck'
+modelfile='testmod.deck'
 
 #run model
 (modearray,nmodes) = rayleigh_python.rayleigh(eps,npow,dt,fnyquist,nbran,
