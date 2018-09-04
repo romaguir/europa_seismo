@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import obspy
 import instaseis
 import numpy as np
