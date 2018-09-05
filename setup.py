@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#from setuptools import setup
 import numpy as np
 from numpy.distutils.core import setup,Extension
 from setuptools import find_packages

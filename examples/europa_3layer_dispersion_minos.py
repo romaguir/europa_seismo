@@ -38,7 +38,7 @@ for i,ice_thickness in enumerate(ice_thicknesses):
     #run model
     modesfile='modes.out'
     eigfile='eig.out'
-    eps=1e-12
+    eps=1e-10
     wgrav=1.315
     jcom=3
     lmin=0
