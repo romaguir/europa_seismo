@@ -550,7 +550,9 @@ class Window(QtGui.QMainWindow):
         self.mpl_map_ax = self.mpl_map_figure.add_axes([0.01,0.01,0.99,0.99])
         self.map = Basemap(projection='moll',lon_0=0,resolution='c',
                            ax = self.mpl_map_ax)
-        self.map.drawcoastlines()
+        #self.map.drawcoastlines()
+        DIR = os.path.dirname(os.path.abspath(__file__)) 
+        self.map.warpimage(image=DIR+'/../data/images/europa_comp_800.jpg', zorder=0)
         self.mpl_map_figure.canvas.draw()
 
     def plot_gabor(self):

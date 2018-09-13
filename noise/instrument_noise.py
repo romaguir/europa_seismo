@@ -2,26 +2,40 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+from obspy.signal.spectral_estimation import get_nlnm, get_nhnm
 
-from numpy.fft import fft,ifft,fftfreq
+def fftnoise(f):
+    f = np.array(f, dtype='complex')
+    Np = (len(f) - 1) // 2
+    phases = np.random.rand(Np) * 2 * np.pi
+    phases = np.cos(phases) + 1j * np.sin(phases)
+    f[1:Np+1] *= phases
+    f[-1:-1-Np:-1] = np.conj(f[1:Np+1])
+    return np.fft.ifft(f).real
 
-def make_noise(npts,dt=1.0):
-    time = np.linspace(0,npts*dt,npts)
-    noise = np.random.randn(npts)
-    noise_w = fft(noise)
-    noise /= np.abs(noise)
-    w = fftfreq(npts,dt)
-    return time,noise,w,noise_w
+def band_limited_noise(min_freq, max_freq, samples=1024, sampling_rate=1.0):
+    freqs = np.abs(np.fft.fftfreq(samples, 1/sampling_rate))
+    f = np.zeros(samples)
+    idx = np.where(np.logical_and(freqs>=min_freq, freqs<=max_freq))[0]
+    f[idx] = 1
+    return fftnoise(f)
 
-def plot_noise(time,noise,w,noise_w):
-    fig,axes = plt.subplots(2,figsize=(5,10))
+def SEASHELS_noise(min_freq, max_freq, samples=1024, sampling_rate=1.0):
+    #TODO: Figure out if I need to square the values of the PSD.
+    freqs = np.abs(np.fft.fftfreq(samples, 1/sampling_rate))
+    f = np.zeros(samples)
+    for idx,freq in enumerate(freqs):
+        if freq > 0.01 and freq < 20.0:
+            f[idx] = 1e-8
+        elif freq >= 20.0:
+            f[idx] = 5e-8
+    return fftnoise(f)
 
-    axes[0].plot(time,noise)
-    axes[0].set_xlabel('time (s)')
+#def from_custom_file(min_freq,max_freq,filename,samples=1024,sampling_rate=1.0):
+#    noisefile = np.loadtxt(filename)
 
-    axes[1].loglog(w,noise_w)
-    axes[1].set_xlabel('frequency (hz)')
+def plot_noise(noise,sampling_rate):
+    time = np.linspace(0,len(noise)*(1./sampling_rate),len(noise))
+    
+    plt.plot(np.abs(np.fft.fft(noise)))
     plt.show()
-
-time,noise,w,noise_w = make_noise(1000,dt=1.0)
-plot_noise(time,noise,w,noise_w)
