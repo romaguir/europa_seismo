@@ -1,2 +1,3 @@
 #!/bin/bash
 rm eig.out modes.out testmod.deck
+rm fort.13

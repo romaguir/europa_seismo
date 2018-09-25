@@ -25,10 +25,15 @@ from glob import iglob
 from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationToolbar
 from europa_seismo.europa_seismo.utils import gauss_filter
 
+DIR = os.path.dirname(os.path.abspath(__file__))
+iconpath=DIR+'/icons/Micon.png'
+
 class Window(QtGui.QMainWindow):
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
+        self.setWindowIcon(QtGui.QIcon(iconpath))
+        print "THE ICON PATH IS", iconpath
         self.ui = layout.Ui_MainWindow()
         self.ui.setupUi(self)
         self.instaseis = False
