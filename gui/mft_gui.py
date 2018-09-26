@@ -15,10 +15,11 @@ import instaseis
 import numpy as np
 import pyqtgraph as pg
 import matplotlib.pyplot as plt
+import matplotlib
 from scipy.signal import hilbert
 from PyQt4 import uic
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import QVBoxLayout
+from PyQt4.QtGui import QVBoxLayout, QFileDialog
 from obspy import geodetics
 from mpl_toolkits.basemap import Basemap
 from glob import iglob
@@ -27,6 +28,7 @@ from europa_seismo.europa_seismo.utils import gauss_filter
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 iconpath=DIR+'/icons/Micon.png'
+
 
 class Window(QtGui.QMainWindow):
 
@@ -160,8 +162,8 @@ class Window(QtGui.QMainWindow):
         self.update()
 
     def on_press_me_button_released(self):
-        print 'the button was pressed'
-        np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
+        #print 'the button was pressed'
+        #np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
         self.update()
 
     def on_differentiate_button_released(self):
@@ -237,7 +239,7 @@ class Window(QtGui.QMainWindow):
         else:
             raise ValueError('filter type',kind,' not implemented')
 
-        np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
+        #np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
 
         self.update()
 
@@ -598,7 +600,46 @@ class Window(QtGui.QMainWindow):
         self.mpl_gabor_figure.canvas.draw()
 
     def on_Save_dispersion_curve_triggered(self, *args):
-        np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
+        #np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
+        filename = QtGui.QFileDialog.getSaveFileName(self,'Save File')
+        fout = open(filename,'w')
+        for i in range(0,len(self.period_pick)): 
+            fout.write('{} {}\n'.format(self.period_pick[i],self.vel_pick[i]))
+        fout.close()
+
+    def on_Open_noise_file_triggered(self, *args):
+        cwd = os.getcwd()
+        noisefile = QtGui.QFileDialog.getOpenFileName(self,"choose a noise file (must have .dat extension)", 
+                                                      cwd,'Data Files (*.dat)')
+        if noisefile != '':
+            self.noisefile = noisefile
+
+        f = open(self.noisefile,'r')
+        f.close()
+        if not self.noisefile:
+            return
+
+    def on_Plot_noise_power_spectrum_triggered(self, *args):
+        plt.style.use('default')
+        f_ = open(self.noisefile,'r')
+        lines = f_.readlines()
+        per = []
+        power = []
+        for line in lines:
+            vals = line.strip().split()
+            per.append(np.float(vals[0]))
+            power.append(np.float(vals[1]))
+
+        fig,ax = plt.subplots(1,figsize=(6,6))
+        ax.semilogx(per,power)
+        ax.set_xlabel('period (s)')
+        ax.set_ylabel('power (dB)')
+        ax.get_xaxis().set_visible(True)
+        plt.show()
+
+    def editor(self):
+        self.textEdit = QtGui.TextEdit()
+        self.setCentralWidget(self.textEdit)
 
 #borrowed from instaseis gui... still learning how this works
 def use_ui_layout():
