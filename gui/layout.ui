@@ -571,33 +571,57 @@
      <x>0</x>
      <y>0</y>
      <width>1065</width>
-     <height>27</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Fi&amp;le</string>
     </property>
     <addaction name="actionOpen_sac_file"/>
     <addaction name="actionExit"/>
     <addaction name="Save_dispersion_curve"/>
+    <addaction name="Open_noise_file"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="Plot_noise_power_spectrum"/>
+    <addaction name="Plot_dispersion_curve"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_sac_file">
    <property name="text">
-    <string>Open</string>
+    <string>&amp;Open</string>
    </property>
   </action>
   <action name="actionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>&amp;Exit</string>
    </property>
   </action>
   <action name="Save_dispersion_curve">
    <property name="text">
-    <string>Save Dispersion Curve As</string>
+    <string>&amp;Save Dispersion Curve As</string>
+   </property>
+  </action>
+  <action name="Open_noise_file">
+   <property name="text">
+    <string>Open Noise File</string>
+   </property>
+  </action>
+  <action name="Plot_noise_power_spectrum">
+   <property name="text">
+    <string>Plot noise power spectrum</string>
+   </property>
+  </action>
+  <action name="Plot_dispersion_curve">
+   <property name="text">
+    <string>Plot dispersion curve</string>
    </property>
   </action>
  </widget>

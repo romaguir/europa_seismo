@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/rossmaguire/Tools/europa_seismo/gui/layout.ui'
+# Form implementation generated from reading ui file '/home/romaguir/Tools/europa_seismo/gui/layout.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -324,10 +324,12 @@ class Ui_MainWindow(object):
         self.verticalLayout.setStretch(2, 10)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1065, 27))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1065, 22))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
+        self.menuTools = QtGui.QMenu(self.menubar)
+        self.menuTools.setObjectName(_fromUtf8("menuTools"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -338,10 +340,20 @@ class Ui_MainWindow(object):
         self.actionExit.setObjectName(_fromUtf8("actionExit"))
         self.Save_dispersion_curve = QtGui.QAction(MainWindow)
         self.Save_dispersion_curve.setObjectName(_fromUtf8("Save_dispersion_curve"))
+        self.Open_noise_file = QtGui.QAction(MainWindow)
+        self.Open_noise_file.setObjectName(_fromUtf8("Open_noise_file"))
+        self.Plot_noise_power_spectrum = QtGui.QAction(MainWindow)
+        self.Plot_noise_power_spectrum.setObjectName(_fromUtf8("Plot_noise_power_spectrum"))
+        self.Plot_dispersion_curve = QtGui.QAction(MainWindow)
+        self.Plot_dispersion_curve.setObjectName(_fromUtf8("Plot_dispersion_curve"))
         self.menuFile.addAction(self.actionOpen_sac_file)
         self.menuFile.addAction(self.actionExit)
         self.menuFile.addAction(self.Save_dispersion_curve)
+        self.menuFile.addAction(self.Open_noise_file)
+        self.menuTools.addAction(self.Plot_noise_power_spectrum)
+        self.menuTools.addAction(self.Plot_dispersion_curve)
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuTools.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -388,10 +400,14 @@ class Ui_MainWindow(object):
         self.mft_type.setItemText(0, _translate("MainWindow", "gaussian", None))
         self.mft_type.setItemText(1, _translate("MainWindow", "butterworth", None))
         self.press_me.setText(_translate("MainWindow", "press_me", None))
-        self.menuFile.setTitle(_translate("MainWindow", "File", None))
-        self.actionOpen_sac_file.setText(_translate("MainWindow", "Open", None))
-        self.actionExit.setText(_translate("MainWindow", "Exit", None))
-        self.Save_dispersion_curve.setText(_translate("MainWindow", "Save Dispersion Curve As", None))
+        self.menuFile.setTitle(_translate("MainWindow", "Fi&le", None))
+        self.menuTools.setTitle(_translate("MainWindow", "Tools", None))
+        self.actionOpen_sac_file.setText(_translate("MainWindow", "&Open", None))
+        self.actionExit.setText(_translate("MainWindow", "&Exit", None))
+        self.Save_dispersion_curve.setText(_translate("MainWindow", "&Save Dispersion Curve As", None))
+        self.Open_noise_file.setText(_translate("MainWindow", "Open Noise File", None))
+        self.Plot_noise_power_spectrum.setText(_translate("MainWindow", "Plot noise power spectrum", None))
+        self.Plot_dispersion_curve.setText(_translate("MainWindow", "Plot dispersion curve", None))
 
 from instaseis.gui.qt4mplcanvas import Qt4MplCanvas
 from instaseis.gui.scientific_double_spin_box import ScientificDoubleSpinBox
