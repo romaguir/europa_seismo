@@ -180,6 +180,13 @@ class Window(QtGui.QMainWindow):
         #    self.gabor_matrix[i,:] = self.stream_slice.data 
         self.multiple_filter()
         self.plot_gabor()
+
+        filename = 'grpvel_dispersion.dat'
+        fout = open(filename,'w')
+        for i in range(0,len(self.period_pick)): 
+            fout.write('{} {}\n'.format(1./self.period_pick[i],self.vel_pick[i]))
+        fout.close()
+
         self.update()
 
     def multiple_filter(self,Tmin=20.0,Tmax=200.0):
@@ -604,7 +611,7 @@ class Window(QtGui.QMainWindow):
         filename = QtGui.QFileDialog.getSaveFileName(self,'Save File')
         fout = open(filename,'w')
         for i in range(0,len(self.period_pick)): 
-            fout.write('{} {}\n'.format(self.period_pick[i],self.vel_pick[i]))
+            fout.write('{} {}\n'.format(1./self.period_pick[i],self.vel_pick[i]))
         fout.close()
 
     def on_Open_noise_file_triggered(self, *args):
