@@ -14,16 +14,19 @@ evdp = 0.0
 stlo = 30.0
 stla = 0.0
 Tmin = 10.0 #minimum period
-Tmax = 150.0 #maximum period
+Tmax = 200.0 #maximum period
 nT = 100
-noise_level = 0.05
-insta_db_name = '/home/romaguir/Documents/10s_PREM_ANI_FORCES'
-window_min = 600.0
-window_max = 1600.0
+noise_level = 0.10
+#insta_db_name = '/home/romaguir/Documents/10s_PREM_ANI_FORCES'
+insta_db_name = '/media/romaguir/wdseis/instaseis_databases/aicehot_5km_prem/aicehot_5km_prem_database/'
+#window_min = 600.0
+#window_max = 1600.0
+window_min = 400.0
+window_max = 3600.0
 m_rr = 3.98e13
 m_pp = 3.98e13
-#planet_radius = 1565.0
-planet_radius = 6371.0
+planet_radius = 1565.0
+#planet_radius = 6371.0
 distaz = gps2dist_azimuth(lat1=evla, lon1=evlo, lat2=stla, lon2=stlo, a=planet_radius*1000.0, f=0.0) # no flattening
 gcarc_m = distaz[0]
 dist_km = gcarc_m / 1000.0
@@ -74,7 +77,7 @@ def mft(stream,Tmin,Tmax,nT,noise_level,a=1.2,b=2.0,plot=True):
 
     #do mft analysis
     for i,period in enumerate(periods):
-        print i,period
+        #print i,period
         #stream_copy.plot()
 
         Tstart = period / a
@@ -104,9 +107,18 @@ def mft(stream,Tmin,Tmax,nT,noise_level,a=1.2,b=2.0,plot=True):
         stream_copy = stream.copy()
         stream_copy[0].data += noise
         
-    plt.plot(per_picks,vel_picks)
-    plt.show()
+    #plt.plot(per_picks,vel_picks)
+    #plt.show()
+    return per_picks,vel_picks
 
 print 'STARTING MFT'
-for i in range(0,10):
-    mft(stream=stream,Tmin=Tmin,Tmax=Tmax,nT=100,noise_level=0.05,a=1.2,b=2.0,plot=True)
+#mft(stream=stream,Tmin=Tmin,Tmax=Tmax,nT=100,noise_level=0.10,a=1.2,b=2.0,plot=True)
+
+nrealizations = 200
+data_matrix = np.zeros((nT,nrealizations))
+for i in range(0,nrealizations):
+    print i
+    per_picks,vel_picks = mft(stream=stream,Tmin=Tmin,Tmax=Tmax,nT=nT,noise_level=noise_level,a=1.2,b=2.0,plot=False)
+    data_matrix[:,i] = vel_picks
+
+np.save('data_matrix_nl{}'.format(noise_level),data_matrix)
