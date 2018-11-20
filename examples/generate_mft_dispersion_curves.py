@@ -16,7 +16,7 @@ stla = 0.0
 Tmin = 10.0 #minimum period
 Tmax = 150.0 #maximum period
 nT = 100
-snr = 0.05
+noise_level = 0.05
 insta_db_name = '/home/romaguir/Documents/10s_PREM_ANI_FORCES'
 window_min = 600.0
 window_max = 1600.0
@@ -53,7 +53,7 @@ time = np.linspace(window_min,
                    stream[0].stats.npts)
 
 #make ensemble of dispersion curves w/ different noise realizations
-def mft(stream,Tmin,Tmax,nT,snr,a=1.2,b=2.0,plot=True):
+def mft(stream,Tmin,Tmax,nT,noise_level,a=1.2,b=2.0,plot=True):
     stream_copy = stream.copy()
     per_picks = [] #period at which grp vel is picked
     vel_picks = [] #measured group velocity
@@ -61,13 +61,13 @@ def mft(stream,Tmin,Tmax,nT,snr,a=1.2,b=2.0,plot=True):
     sigmax = np.max(np.abs(stream[0].data))
     noise = np.random.random(len(stream[0].data))
     noise = (noise*2.0) -1.
-    noise *= (snr * sigmax)
+    noise *= (noise_level * sigmax)
     stream_copy[0].data += noise
 
     if plot:
         fig,ax = plt.subplots(1,sharex=True,figsize=[10,2])
         ax.plot(time,stream[0].data,c='k',label='no noise')
-        ax.plot(time,stream_copy[0].data,c='b',label='w/ noise, snr = {}'.format(snr))
+        ax.plot(time,stream_copy[0].data,c='b',label='noise level = {}'.format(noise_level))
         ax.set_xlabel('time (s)')
         plt.legend()
         plt.show()
@@ -109,4 +109,4 @@ def mft(stream,Tmin,Tmax,nT,snr,a=1.2,b=2.0,plot=True):
 
 print 'STARTING MFT'
 for i in range(0,10):
-    mft(stream=stream,Tmin=Tmin,Tmax=Tmax,nT=100,snr=0.05,a=1.2,b=2.0,plot=True)
+    mft(stream=stream,Tmin=Tmin,Tmax=Tmax,nT=100,noise_level=0.05,a=1.2,b=2.0,plot=True)
