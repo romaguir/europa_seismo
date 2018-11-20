@@ -35,7 +35,6 @@ class Window(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.setWindowIcon(QtGui.QIcon(iconpath))
-        print "THE ICON PATH IS", iconpath
         self.ui = layout.Ui_MainWindow()
         self.ui.setupUi(self)
         self.instaseis = False
@@ -47,6 +46,7 @@ class Window(QtGui.QMainWindow):
         self.source = None
         self.window_start = None
         self.window_end = None
+        self.sigmax = None
         self.nbands = 100
         self.gabor_matrix = np.zeros((self.nbands,self.nbands))
         self.periods = np.linspace(self.ui.min_period.value(),
@@ -136,7 +136,7 @@ class Window(QtGui.QMainWindow):
         self.stream = self.instaseis_db.get_seismograms(source=self.source,
                                        receiver=self.receiver,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
         self.stream[0].stats.sac = {}
         self.stream[0].stats.sac['o'] = 0.0
@@ -154,23 +154,23 @@ class Window(QtGui.QMainWindow):
         self.plot_map()
         self.update()
 
-    def on_integrate_button_released(self):
-        if not self.stream:
-            return
-        self.stream = self.stream.integrate()
-    
+    #def on_integrate_button_released(self):
+    #    if not self.stream:
+    #        return
+    #    self.stream = self.stream.integrate()
+    # 
+    #     self.update()
+    #def on_differentiate_button_released(self):
+    #    if not self.stream:
+    #        return
+    #    self.stream = self.stream.differentiate()
+    #    self.update()
+
+    def on_save_curve_button_released(self):
+        print 'THE DISPERSION CURVE SHOULD BE SAVED'
+        np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
         self.update()
 
-    def on_press_me_button_released(self):
-        #print 'the button was pressed'
-        #np.savetxt('dispersion_curve.dat',np.c_[self.period_pick,self.vel_pick],fmt='%5f')
-        self.update()
-
-    def on_differentiate_button_released(self):
-        if not self.stream:
-            return
-        self.stream = self.stream.differentiate()
-        self.update()
 
     def on_calc_dispersion_button_released(self):
         #self.gabor_matrix = np.zeros((self.stream_slice.stats.npts,
@@ -192,7 +192,8 @@ class Window(QtGui.QMainWindow):
                                            self.ui.window_end.value(),
                                            len(self.stream_slice.data))
         except TypeError:
-            time = np.linspace(100,200,100)
+           # time = np.linspace(100,200,100)
+           raise ValueError('error in self.time_window')
 
         #self.periods = np.linspace(Tmin,Tmax,nbands)
         self.gabor_matrix = np.zeros((len(self.time_window),len(self.periods))) 
@@ -284,7 +285,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -298,7 +299,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -315,7 +316,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -332,7 +333,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -349,7 +350,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -366,7 +367,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -383,7 +384,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -400,7 +401,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -408,6 +409,7 @@ class Window(QtGui.QMainWindow):
             float(self.ui.evla.value()),float(self.ui.evlo.value()),
             float(self.ui.stla.value()),float(self.ui.stlo.value())) 
             self.stream_copy = self.stream.copy()
+        self.plot_map()
         self.update()
 
     def on_evla_valueChanged(self, *args):
@@ -417,7 +419,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -425,6 +427,7 @@ class Window(QtGui.QMainWindow):
             float(self.ui.evla.value()),float(self.ui.evlo.value()),
             float(self.ui.stla.value()),float(self.ui.stlo.value())) 
             self.stream_copy = self.stream.copy()
+        self.plot_map()
         self.update()
 
     def on_stlo_valueChanged(self, *args):
@@ -434,7 +437,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -442,6 +445,7 @@ class Window(QtGui.QMainWindow):
             float(self.ui.evla.value()),float(self.ui.evlo.value()),
             float(self.ui.stla.value()),float(self.ui.stlo.value())) 
             self.stream_copy = self.stream.copy()
+        self.plot_map()
         self.update()
 
     def on_stla_valueChanged(self, *args):
@@ -451,7 +455,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -459,6 +463,7 @@ class Window(QtGui.QMainWindow):
             float(self.ui.evla.value()),float(self.ui.evlo.value()),
             float(self.ui.stla.value()),float(self.ui.stlo.value())) 
             self.stream_copy = self.stream.copy()
+        self.plot_map()
         self.update()
 
     def on_min_period_valueChanged(self, *args):
@@ -480,7 +485,7 @@ class Window(QtGui.QMainWindow):
             self.stream = self.instaseis_db.get_seismograms(source=src,
                                        receiver=rec,
                                        components=str(self.ui.component.currentText()),
-                                       kind='displacement',
+                                       kind=str(self.ui.motion_type.currentText()),
                                        remove_source_shift=True)
             self.stream[0].stats.sac = {}
             self.stream[0].stats.sac['o'] = 0.0
@@ -491,6 +496,37 @@ class Window(QtGui.QMainWindow):
         self.update()
 
     def on_mft_type_currentIndexChanged(self, *args):
+        if self.instaseis:
+            src = self.mt_source
+            rec = self.instaseis_receiver
+            self.stream = self.instaseis_db.get_seismograms(source=src,
+                                       receiver=rec,
+                                       components=str(self.ui.component.currentText()),
+                                       kind=str(self.ui.motion_type.currentText()),
+                                       remove_source_shift=True)
+            self.stream[0].stats.sac = {}
+            self.stream[0].stats.sac['o'] = 0.0
+            self.stream[0].stats.sac['gcarc'] = geodetics.locations2degrees(
+            float(self.ui.evla.value()),float(self.ui.evlo.value()),
+            float(self.ui.stla.value()),float(self.ui.stlo.value())) 
+            self.stream_copy = self.stream.copy()
+        self.update()
+
+    def on_motion_type_currentIndexChanged(self, *args):
+        if self.instaseis:
+            src = self.mt_source
+            rec = self.instaseis_receiver
+            self.stream = self.instaseis_db.get_seismograms(source=src,
+                                       receiver=rec,
+                                       components=str(self.ui.component.currentText()),
+                                       kind=str(self.ui.motion_type.currentText()),
+                                       remove_source_shift=True)
+            self.stream[0].stats.sac = {}
+            self.stream[0].stats.sac['o'] = 0.0
+            self.stream[0].stats.sac['gcarc'] = geodetics.locations2degrees(
+            float(self.ui.evla.value()),float(self.ui.evlo.value()),
+            float(self.ui.stla.value()),float(self.ui.stlo.value())) 
+            self.stream_copy = self.stream.copy()
         self.update()
 
     def on_planet_currentIndexChanged(self, *args):
@@ -507,9 +543,12 @@ class Window(QtGui.QMainWindow):
     def on_window_start_valueChanged(self, *args):
         t_start = float(self.ui.window_start.value())
         t_end = float(self.ui.window_end.value())
-        self.stream_slice = self.stream[0].slice(
-            self.stream[0].stats.starttime + t_start,
-            self.stream[0].stats.starttime + t_end)
+        #self.stream_slice = self.stream[0].slice(
+        #    self.stream[0].stats.starttime + t_start,
+        #    self.stream[0].stats.starttime + t_end)
+        self.stream_slice = self.stream_copy[0].slice(
+            self.stream_copy[0].stats.starttime + t_start,
+            self.stream_copy[0].stats.starttime + t_end)
         self.stream = self.stream_copy
         self.update()
 
@@ -525,6 +564,25 @@ class Window(QtGui.QMainWindow):
     def on_alpha_valueChanged(self, *args):
         self.update()
 
+    def on_snr_value_valueChanged(self, band_limited=True, *args):
+        self.stream = self.stream_copy.copy()
+        print self.stream_copy is self.stream
+        noise = np.random.random(len(self.stream[0].data))
+        noise = (noise*2.0) - 1.
+        noise *= self.ui.snr_value.value() * self.sigmax
+
+        if band_limited:
+            noise_tr = obspy.Trace()
+            noise_tr.stats.sampling_rate = self.stream[0].stats.sampling_rate
+            noise_tr.data = noise
+            noise_tr.filter('lowpass',freq=1./self.ui.min_period.value())
+            self.stream[0].data = self.stream_copy[0].data + noise_tr.data
+
+        else:
+            self.stream[0].data += self.stream_copy[0].data + noise
+        #self.stream[0] = self.stream_copy[0].data + noise
+        self.update()
+
     def update(self, force=False):
         #plot_widget = self.ui.seismogram
         #plot_widget.clear()
@@ -532,6 +590,8 @@ class Window(QtGui.QMainWindow):
         #                   self.stream[0].stats.npts*self.stream[0].stats.delta,
         #                   self.stream[0].stats.npts)
         #plot_widget.plot(time,self.stream[0].data,pen='b')
+        self.sigmax = np.max(np.abs(self.stream_copy[0].data))
+        print 'min and max of stream_copy', np.min(self.stream_copy[0].data),np.max(self.stream_copy[0].data)
         self.plot_seismogram()
         #self.plot_gabor()
 
@@ -553,6 +613,7 @@ class Window(QtGui.QMainWindow):
         self.mpl_seis_figure.canvas.draw()
 
     def plot_map(self):
+        plt.cla()
         self.mpl_map_figure = self.ui.map.fig
         self.mpl_map_ax = self.mpl_map_figure.add_axes([0.01,0.01,0.99,0.99])
         self.map = Basemap(projection='moll',lon_0=0,resolution='c',
@@ -560,7 +621,12 @@ class Window(QtGui.QMainWindow):
         #self.map.drawcoastlines()
         DIR = os.path.dirname(os.path.abspath(__file__)) 
         self.map.warpimage(image=DIR+'/../data/images/europa_comp_800.jpg', zorder=0)
+        x,y = self.map(self.ui.evlo.value(),self.ui.evla.value())
+        x2,y2 = self.map(self.ui.stlo.value(),self.ui.stla.value())
+        self.map.scatter(x,y,marker='*',color='yellow')
+        self.map.scatter(x2,y2,marker='^',color='red')
         self.mpl_map_figure.canvas.draw()
+        self.mpl_map_figure.canvas.flush_events()
 
     def plot_gabor(self):
 
