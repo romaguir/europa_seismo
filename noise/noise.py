@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from obspy.signal.spectral_estimation import get_nlnm, get_nhnm
 
-def make_some_noise(f,npts,dt):
+def make_some_noise(f,npts,dt,type='acceleration'):
     '''
     Make noise for a given amplitude spectrum
 
@@ -53,15 +53,15 @@ def noise_from_external(input_file,npts=1024,dt=1.0,units='amplitude'):
 
     return make_some_noise(f, npts, dt)
 
-def SEASHELS_noise(min_freq, max_freq, samples=1024, sampling_rate=1.0):
-    freqs = np.abs(np.fft.fftfreq(samples, 1/sampling_rate))
-    f = np.zeros(samples)
+def SEASHELS_noise(min_freq, max_freq, npts=1024, dt=1.0):
+    freqs = np.abs(np.fft.fftfreq(npts,dt))
+    f = np.zeros(npts)
     for idx,freq in enumerate(freqs):
         if freq > 0.01 and freq < 20.0:
             f[idx] = 1e-8
         elif freq >= 20.0:
             f[idx] = 5e-8
-    return make_some_noise(f)
+    return make_some_noise(f, npts, dt)
 
 def nlnm_noise(npts=1024,dt=1.0):
     p, power = get_nlnm() # returns period and power of acceleration PSD

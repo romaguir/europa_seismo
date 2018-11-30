@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.signal import hilbert
 
 def read_deck_model(modelfile):
     f = open(modelfile,'r')
@@ -84,11 +85,11 @@ def write_deck_model(layers_dict,output_model,base_model,**kwargs):
     #write core and mantle model (i.e. to start of ocean)
     #fmt='%10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f %10.2f'
     #fmt='%10.2f '*9
-    fmt = '%8.0f%9.2f%9.2f%9.2f%9.1f%9.1f%9.2f%9.2f%9.5f' 
+    fmt = '%8.0f%9.2f%9.2f%9.2f%9.1f%9.1f%9.2f%9.2f%9.5f'
     np.savetxt(f, vals_arr[0:nic], fmt=fmt)
 
     #append ocean, ice, and regolith layer on top of the mantle
-    fmt = '{:8.0f}{:9.2f}{:9.2f}{:9.2f}{:9.1f}{:9.1f}{:9.2f}{:9.2f}{:9.5f}' 
+    fmt = '{:8.0f}{:9.2f}{:9.2f}{:9.2f}{:9.1f}{:9.1f}{:9.2f}{:9.2f}{:9.5f}'
     #fmt='{:>10.2f} '*9
     ric = vals_arr[:,0][nic]
     roc = ric + layers_dict['ocean']['thickness']
@@ -155,3 +156,60 @@ def write_deck_model(layers_dict,output_model,base_model,**kwargs):
                        layers_dict['regolith']['eta'])+'\n')
     f.close()
 
+
+def mft(stream,Tmin,Tmax,nT,noise_level,window_min,dist_km,a=1.2,b=2.0,plot=True):
+    stream_copy = stream.copy()
+    per_picks = [] #period at which grp vel is picked
+    vel_picks = [] #measured group velocity
+    periods = np.linspace(Tmin,Tmax,nT)
+    sigmax = np.max(np.abs(stream[0].data))
+    noise = np.random.random(len(stream[0].data))
+    noise = (noise*2.0) -1.
+    noise *= (noise_level * sigmax)
+    stream_copy[0].data += noise
+
+    if plot:
+        time = np.linspace(window_min,
+                   window_min+(stream[0].stats.npts * stream[0].stats.delta),
+                   stream[0].stats.npts)
+        fig,ax = plt.subplots(1,sharex=True,figsize=[10,2])
+        ax.plot(time,stream[0].data,c='k',label='no noise')
+        ax.plot(time,stream_copy[0].data,c='b',label='noise level = {}'.format(noise_level))
+        ax.set_xlabel('time (s)')
+        plt.legend()
+        plt.show()
+
+    #do mft analysis
+    for i,period in enumerate(periods):
+
+        Tstart = period / a
+        Tend = period + (period / b)
+        freqmin = 1. / Tend
+        freqmax = 1. / Tstart
+
+        if freqmin > 0:
+            tr = stream_copy[0].filter('bandpass',
+                freqmin=freqmin,freqmax=freqmax,corners=4,
+                zerophase=True)
+        else:
+            tr = stream_copy[0].filter('lowpass',
+                freq=freqmax)
+
+        dcol = tr.data
+        env = np.abs(hilbert(dcol.real))
+
+        if np.max(env) > 0.0:
+            per_picks.append(period)
+            vel_picks.append(dist_km / time[np.argmax(env)])
+
+        #plt.plot(time,tr.data)
+        #plt.scatter(period,np.max(np.abs(env)))
+        #plt.show()
+        stream_copy = stream.copy()
+        stream_copy[0].data += noise
+
+    #plt.plot(per_picks,vel_picks)
+    #plt.show()
+    return per_picks,vel_picks
+
+print 'STARTING MFT'
