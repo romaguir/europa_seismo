@@ -20,7 +20,7 @@ scalarMap1 = cm.ScalarMappable(norm=cNorm,cmap=viridis)
 scalarMap2 = cm.ScalarMappable(norm=cNorm,cmap=inferno)
 
 #setup figure
-fig,axes = plt.subplots(1,2,figsize=(10,6))
+fig,axes = plt.subplots(1,2,figsize=(18,10))
 
 for i,ice_thickness in enumerate(ice_thicknesses):
     print i,ice_thickness
@@ -74,4 +74,5 @@ axes[1].grid()
 
 axes[0].legend()
 axes[1].legend()
-plt.show()
+#plt.show()
+plt.savefig('dispersion.pdf')

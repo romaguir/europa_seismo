@@ -3,7 +3,6 @@ import instaseis
 import numpy as np
 import matplotlib.pyplot as plt
 from europa_seismo.noise import environment_noise
-from europa_seismo.noise.instrument_noise import fftnoise
 from obspy.signal.spectral_estimation import get_nlnm, get_nhnm
 from scipy.fftpack import fft,ifft,fftfreq
 from scipy.interpolate import interp1d
@@ -24,7 +23,7 @@ power_i = np.interp(freqs,f_in,power)
 #plt.loglog(f_in,10**(power_dB/20.))
 
 #method 1: use fftnoise function
-noise1 = fftnoise(np.sqrt(power_i),n_samples,1./dt)
+#noise1 = fftnoise(np.sqrt(power_i),n_samples,1./dt)
 
 #method 2: add noise to a normalized white noise spectrum
 whitenoise = np.random.random(n_samples)
@@ -45,9 +44,9 @@ axes[0].set_xlim([0.1,500.0])
 axes[0].set_xlabel('period (s)')
 axes[0].set_ylabel('power (dB)')
 axes[0].legend()
-axes[1].plot(time,noise1)
-axes[1].set_xlabel('time (s)')
-axes[1].set_ylabel('acceleration (m/s^2)')
+#axes[1].plot(time,noise1)
+#axes[1].set_xlabel('time (s)')
+#axes[1].set_ylabel('acceleration (m/s^2)')
 plt.show()
 
 #--------------------------------------------------------------------

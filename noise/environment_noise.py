@@ -1,5 +1,5 @@
 from obspy.signal.spectral_estimation import get_nlnm, get_nhnm
-from europa_seismo.noise.instrument_noise import fftnoise
+#from europa_seismo.noise.instrument_noise import fftnoise
 from scipy.interpolate import interp1d
 import numpy as np
 

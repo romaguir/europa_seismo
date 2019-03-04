@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 from matplotlib import cm
 from europa_seismo.europa_seismo import rayleigh,rayleigh_python
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 cwd = os.getcwd()
 
@@ -20,7 +23,7 @@ scalarMap1 = cm.ScalarMappable(norm=cNorm,cmap=viridis)
 scalarMap2 = cm.ScalarMappable(norm=cNorm,cmap=inferno)
 
 #setup figure
-fig,axes = plt.subplots(1,2,figsize=(10,6))
+fig,axes = plt.subplots(1,2,figsize=(18,10))
 
 for i,ice_thickness in enumerate(ice_thicknesses):
     print i,ice_thickness
@@ -84,4 +87,5 @@ axes[0].set_title('group velocity')
 axes[1].set_title('phase velocity')
 axes[0].legend()
 axes[1].legend()
-plt.show()
+#plt.show()
+plt.savefig('dispersion.pdf')

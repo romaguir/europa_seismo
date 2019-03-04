@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1110</width>
+    <width>1178</width>
     <height>869</height>
    </rect>
   </property>
@@ -116,27 +116,16 @@
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="corners">
-              <item>
-               <property name="text">
-                <string>1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>4</string>
-               </property>
-              </item>
+             <widget class="QSpinBox" name="corners">
+              <property name="minimum">
+               <number>2</number>
+              </property>
+              <property name="maximum">
+               <number>16</number>
+              </property>
+              <property name="value">
+               <number>4</number>
+              </property>
              </widget>
             </item>
            </layout>
@@ -468,7 +457,7 @@
            </widget>
           </item>
           <item>
-           <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,2,1,2,2,2,2,2,0">
+           <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,0,0,0,0,0,0,0,0,0">
             <item row="1" column="0">
              <widget class="QLabel" name="label_19">
               <property name="text">
@@ -548,12 +537,27 @@
                 <string>gaussian</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>bessel</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item row="1" column="8">
-             <widget class="QPushButton" name="save_dispersion_curve">
+             <widget class="QLabel" name="label_21">
               <property name="text">
-               <string>save curve</string>
+               <string>gamma</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="9">
+             <widget class="QDoubleSpinBox" name="gamma">
+              <property name="maximum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>0.500000000000000</double>
               </property>
              </widget>
             </item>
@@ -575,7 +579,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1110</width>
+     <width>1178</width>
      <height>27</height>
     </rect>
    </property>

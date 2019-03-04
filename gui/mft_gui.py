@@ -25,6 +25,7 @@ from mpl_toolkits.basemap import Basemap
 from glob import iglob
 from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationToolbar
 from europa_seismo.europa_seismo.utils import gauss_filter
+from europa_seismo.europa_seismo.utils import stream_filter_bessel
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 iconpath=DIR+'/icons/Micon.png'
@@ -223,15 +224,17 @@ class Window(QtGui.QMainWindow):
 
         elif self.ui.mft_type.currentText() == 'butterworth':
             for i,period in enumerate(self.periods):
-                Tstart = period / 1.2
-                Tend = period + (period / 2.0)
-                freqmin = 1. / Tend
-                freqmax = 1. / Tstart
+                #Tstart = period / 1.2
+                #Tend = period + (period / 2.0)
+                freqmin = 1./period - (self.ui.gamma.value() * (1./period))
+                freqmax = 1./period + (self.ui.gamma.value() * (1./period))
+                #freqmin = 1. / Tend
+                #freqmax = 1. / Tstart
                 self.stream_slice_copy = self.stream_slice.copy()
 
                 if freqmin > 0:
                     tr = self.stream_slice_copy.filter('bandpass',
-                        freqmin=freqmin,freqmax=freqmax,corners=4,
+                        freqmin=freqmin,freqmax=freqmax,corners=self.ui.corners.value(),
                         zerophase=True)
                 else:
                     tr = self.stream_slice_copy.filter('lowpass',
@@ -244,6 +247,31 @@ class Window(QtGui.QMainWindow):
                 if np.max(env) > 0.0:
                     self.vel_pick.append(self.dist_km/self.time_window[np.argmax(env)])
                     self.period_pick.append(period)
+
+        elif self.ui.mft_type.currentText() == 'bessel':
+            for i,period in enumerate(self.periods):
+                self.stream_slice_copy = self.stream_slice.copy()
+                tr = self.stream_slice_copy
+                st_new = obspy.Stream()
+                st_new += tr
+                #dcol = gauss_filter(tr.data,tr.stats.sampling_rate,
+                #    w_0=(1/period),alpha=self.ui.alpha.value())
+                
+                #dcol = stream_filter_bessel(st_new,(1./period) - (self.ui.gamma.value()*(1./period)),
+                #                                   (1./period) + (self.ui.gamma.value()*(1./period)),
+                #                                    corners=self.ui.corners.value(),zerophase=True)[0].data
+                dcol = stream_filter_bessel(st_new,
+                                            1./period,
+                                            self.ui.gamma.value(),
+                                            corners=self.ui.corners.value(),
+                                            zerophase=True)[0].data
+                env = np.abs(hilbert(dcol.real))
+                self.gabor_matrix[:,i] = env
+
+                if np.max(env) > 0.0:
+                    self.vel_pick.append(self.dist_km/self.time_window[np.argmax(env)])
+                    self.period_pick.append(period)
+
         else:
             raise ValueError('filter type',kind,' not implemented')
 

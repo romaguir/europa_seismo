@@ -15,6 +15,6 @@ setup(name='europa_seismo',
       url='www.github.com/romaguir/europa_seismo',
       packages=find_packages(),
       install_requires=['pymc'],
-      scripts=['bin/find_accel_max'],
+      scripts=['bin/find_accel_max','bin/plot_bm_model'],
       license='GNU',
       ext_modules = [minos,rayleigh_python])

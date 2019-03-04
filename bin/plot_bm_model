@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib
+from sys import argv
+
+parameter = argv[1]
+
+font={'family':'sans-serif',
+      'color':'black',
+      'weight':'normal',
+      'size':14}
+
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+
+print argv
+
+iceshell_thickness = 20.0
+
+for i in range(2,len(argv)):
+
+    f = np.loadtxt(argv[i],skiprows=4)
+    radius = f[:,0]
+    rho = f[:,1]
+    vp = f[:,2]
+    vs = f[:,3]
+    Qkappa = f[:,4]
+    Qmu = f[:,5]
+    radius_km = radius/1000.0
+    depth_km = np.max(radius_km) - radius_km
+
+    label = argv[i].split('/')[-1].split('.')[0]
+
+    if parameter == 'rho':
+        plt.plot(rho,depth_km,label=label)
+        plt.xlabel('density (kg/m^3)')
+        plt.ylabel('depth (km)')
+    elif parameter == 'vp':
+        plt.plot(vp,depth_km,label=label)
+        plt.xlabel('velocity (km/s)')
+        plt.ylabel('depth (km)')
+    elif parameter == 'vs':
+        plt.plot(vs,depth_km,label=label)
+        plt.xlabel('velocity (km/s)')
+        plt.ylabel('depth (km)')
+    elif parameter == 'Qkappa':
+        #plt.plot(Qkappa,depth_km)
+        plt.semilogx(Qkappa,depth_km,label=label,linewidth=2)
+        plt.xlabel('Q$_{\kappa}$')
+        plt.ylabel('depth (km)')
+        plt.ylim([iceshell_thickness,0])
+
+    elif parameter == 'Qmu':
+        #plt.plot(Qmu,depth_km)
+        plt.semilogx(Qmu,depth_km,label=label,linewidth=2)
+        plt.xlabel('Q$_{\mu}$')
+        plt.ylabel('depth (km)')
+        plt.ylim([iceshell_thickness,0])
+    
+plt.legend()
+plt.show()
+

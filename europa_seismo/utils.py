@@ -1,4 +1,6 @@
+import obspy
 import numpy as np
+from scipy import signal
 
 def Mw_to_Mo(Mw,units='Nm'):
     '''
@@ -102,3 +104,42 @@ def gauss_filter(data,sampling_rate,w_0,alpha,return_filter=False):
         return data_filtered
     else:
         return data_filtered,F_filter[0:int(nfreqs/2)]
+
+def bessel_filter(data,freqmin,freqmax,sampling_rate,corners=4,zerophase=False):
+    fe = 0.5 * sampling_rate
+    low = freqmin / fe
+    high = freqmax / fe
+    z,p,k = signal.iirfilter(corners,[low,high],btype='bandpass',ftype='bessel',output='zpk')
+    sos = signal.zpk2sos(z,p,k)
+
+    if zerophase:
+        firstpass = signal.sosfilt(sos, data)
+        return signal.sosfilt(sos, firstpass[::-1])[::-1]
+    else:
+        return signal.sosfilt(sos, data)
+
+#def stream_filter_bessel(stream,freqmin,freqmax,corners=4,zerophase=False):
+def stream_filter_bessel(stream,center_freq,gamma=0.5,corners=4,zerophase=False):
+    filtered_stream = obspy.Stream() 
+    for tr in stream.copy():
+        fe = 0.5 * tr.stats.sampling_rate
+
+        freqmin = center_freq - (gamma * center_freq)
+        freqmax = center_freq + (gamma * center_freq)
+
+        low = freqmin / fe
+        high = freqmax / fe
+        z,p,k = signal.iirfilter(corners,[low,high],btype='bandpass',ftype='bessel',output='zpk')
+        sos = signal.zpk2sos(z,p,k)
+
+        if zerophase:
+            first_pass = signal.sosfilt(sos,tr.data)
+            second_pass = signal.sosfilt(sos,first_pass[::-1])[::-1] 
+            tr.data = second_pass
+            filtered_stream += tr
+        else:
+            filtered_data = signal.sosfilt(sos,tr.data)
+            tr.data = filtered_data
+            filtered_stream += tr
+
+    return filtered_stream
