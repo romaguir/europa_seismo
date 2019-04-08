@@ -48,7 +48,7 @@ class Window(QtGui.QMainWindow):
         self.window_start = None
         self.window_end = None
         self.sigmax = None
-        self.nbands = 100
+        self.nbands = 200
         self.gabor_matrix = np.zeros((self.nbands,self.nbands))
         self.periods = np.linspace(self.ui.min_period.value(),
                                    self.ui.max_period.value(),
@@ -695,7 +695,7 @@ class Window(QtGui.QMainWindow):
         #ftest = np.loadtxt('/home/romaguir/Tools/europa_seismo/data/prem_grpvel_minos.txt')
         #self.mpl_gabor_ax.plot(ftest[:,0],ftest[:,1],c='k',alpha=0.75)
         self.mpl_gabor_ax.set_xlim([self.ui.min_period.value(),self.ui.max_period.value()])
-        self.mpl_gabor_ax.set_ylim([np.min(veloc),min(5,np.max(veloc))])
+        #self.mpl_gabor_ax.set_ylim([np.min(veloc),min(5,np.max(veloc))])
         self.mpl_gabor_ax.set_xlabel('period (s)')
         self.mpl_gabor_ax.set_ylabel('velocity (km/s)')
         self.mpl_gabor_figure.canvas.draw()
@@ -707,6 +707,75 @@ class Window(QtGui.QMainWindow):
         for i in range(0,len(self.period_pick)): 
             fout.write('{} {}\n'.format(1./self.period_pick[i],self.vel_pick[i]))
         fout.close()
+
+    def on_Save_report_triggered(self, *args):
+        report_dir = 'report_'+self.folder.split('/')[-1]+'_deg'+str(self.ui.stlo.value())
+        if not os.path.isdir(report_dir):
+            os.mkdir(report_dir)
+
+        #open files
+        metadata = open(report_dir+'/metadata.txt','w')
+        waveform = open(report_dir+'/waveform.dat','w')
+        mft_data_freq = open(report_dir+'/mft_data_freq.dat','w')
+        mft_data_per = open(report_dir+'/mft_data_per.dat','w')
+        disp_crv = open(report_dir+'/disp_crv.dat','w')
+
+        #write metadata
+        metadata.write('----------------------------------------\n')
+        metadata.write('basic info\n')
+        metadata.write('----------------------------------------\n')
+        metadata.write('database:'+ self.folder+'\n')
+        metadata.write('window start:' + str(self.ui.window_start.value())+'\n')
+        metadata.write('window end:' + str(self.ui.window_end.value())+'\n')
+        metadata.write('stlo:'+ str(self.ui.stlo.value())+'\n')
+        metadata.write('stla:'+ str(self.ui.stla.value())+'\n')
+        metadata.write('evlo:'+ str(self.ui.evlo.value())+'\n')
+        metadata.write('evla:'+ str(self.ui.evla.value())+'\n')
+        metadata.write('mft_type:'+self.ui.mft_type.currentText()+'\n')
+        metadata.write('alpha:'+ str(self.ui.alpha.value())+'\n')
+        metadata.write('gamma:'+ str(self.ui.gamma.value())+'\n')
+        metadata.write('corners:'+ str(self.ui.corners.value())+'\n')
+        metadata.write('min period:'+ str(self.ui.min_period.value())+'\n')
+        metadata.write('max period:'+ str(self.ui.max_period.value())+'\n\n')
+
+        metadata.write('----------------------------------------\n')
+        metadata.write('moment tensor\n')
+        metadata.write('----------------------------------------\n')
+        metadata.write('m_rr:'+ str(self.ui.m_rr.value())+'\n')
+        metadata.write('m_tt:'+ str(self.ui.m_tt.value())+'\n')
+        metadata.write('m_pp:'+ str(self.ui.m_pp.value())+'\n')
+        metadata.write('m_rt:'+ str(self.ui.m_rt.value())+'\n')
+        metadata.write('m_rp:'+ str(self.ui.m_rp.value())+'\n')
+        metadata.write('m_tp:'+ str(self.ui.m_tp.value())+'\n')
+
+        #save gabor matrix
+        self.gabor_matrix /= np.max(self.gabor_matrix)
+        pers, vels = np.meshgrid(self.periods, self.dist_km/self.time_window)
+        freqs = 1./pers
+
+        for i in range(0,len(freqs.flatten())):
+            mft_data_freq.write('{} {} {}\n'.format(freqs.flatten()[i],
+                                             vels.flatten()[i],
+                                             self.gabor_matrix.flatten()[i]))
+            mft_data_per.write('{} {} {}\n'.format(pers.flatten()[i],
+                                             vels.flatten()[i],
+                                             self.gabor_matrix.flatten()[i]))
+
+        #save waveform
+        for i in range(0,len(self.stream_slice.data)):
+            waveform.write('{} {}\n'.format(self.time_window[i],self.stream_slice.data[i]))
+
+        #save dispersion curve
+        for i in range(0,len(self.period_pick)): 
+            disp_crv.write('{} {}\n'.format(1./self.period_pick[i],self.vel_pick[i]))
+
+        #close files
+        metadata.close()
+        waveform.close()
+        mft_data_freq.close()
+        mft_data_per.close()
+        disp_crv.close()
+
 
     def on_Open_noise_file_triggered(self, *args):
         cwd = os.getcwd()

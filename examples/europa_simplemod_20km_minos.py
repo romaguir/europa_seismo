@@ -15,7 +15,8 @@ wmin=0.1
 wmax=100.0 #10 s period
 nmin=0.0
 nmax=0.0
-modelfile='../data/models/icehot_20km_simple.txt'
+#modelfile='../data/models/icehot_20km_simple.txt'
+modelfile='../data/models/aicehot_10km_prem.txt'
 minos.main(modelfile,modesfile,eigfile,eps,wgrav,jcom,lmin,lmax,wmin,wmax,nmin,nmax)
 
 f = np.genfromtxt('modes.out')
@@ -24,9 +25,9 @@ phase_vel = f[:,3]
 group_vel= f[:,6]
 
 #add Gaussian noise
-sigma = 0.1 #standard deviation of error = 0.1 km / s
-error = np.random.normal(loc = 0.0, scale = sigma, size = len(group_vel))
-group_vel += error
+#sigma = 0.1 #standard deviation of error = 0.1 km / s
+#error = np.random.normal(loc = 0.0, scale = sigma, size = len(group_vel))
+#group_vel += error
 
 #plot dispersion curves
 rayleigh.plot_deck_model(modelfile)

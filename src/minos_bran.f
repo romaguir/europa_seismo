@@ -346,7 +346,8 @@ c        print 200,nord,kchar(jcom),l,cvel,wmhz,tcom,gcom
 
       subroutine modout(wcom,qmod,gcom,ioeig,ncall)
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       real*4 abuf,buf,ww,qq,gc
       common/bits/pi,rn,vn,wn,w,wsq,wray,qinv,cg,wgrav,tref,fct,eps,fl,
      +  fl1,fl2,fl3,sfl3,jcom,nord,l,kg,kount,knsw,ifanis,iback
@@ -390,7 +391,8 @@ c		include writing egfcns (mhr)
       end
       subroutine model(iin,iout)
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       integer*4 ititle(20)
       real*8 lcon,ncon,lspl,nspl
@@ -535,7 +537,8 @@ c*** normalise and spline ***
 c**** supevises the integration of the equations,it returns the value
 c**** of the secular determinant as det and the count of zero crossings.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c****      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -747,7 +750,8 @@ c*** toroidal modes ***
       subroutine sprpmn(jf,jl,f,h,nvesm,iexp)
 c*** propagate a minor vector in a solid region from level jf to jl ***
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -862,7 +866,8 @@ c*** propagate a minor vector in a solid region from level jf to jl ***
       subroutine fprpmn(jf,jl,f,h,nvefm,iexp)
 c*** propagate the minor vector in a fluid region from level jf to jl ***
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -952,7 +957,8 @@ c*** propagate the minor vector in a fluid region from level jf to jl ***
       subroutine derms(iq,z,f,fp,iknt,qff,qll,qaa)
 c*** calculates minor vector derivative (fp) in a solid ***
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 nn,ll,lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -1099,7 +1105,8 @@ c*** calculates minor vector derivative (fp) in a solid ***
       subroutine dermf(iq,z,f,fp,iknt,qff)
 c*** calculates minor vector derivative (fp) in a fluid ***
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -1164,7 +1171,8 @@ c*** calculates minor vector derivative (fp) in a fluid ***
       subroutine eifout(lsmin)
 c*** massages spheroidal mode eigenfunctions before output ***
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 ll,lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -1319,7 +1327,8 @@ c*** fifth order gauss-legendre integration ***
       subroutine sdepth(wdim,ls)
 c*** finds starting level,ls, for a given l and w ***
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -1742,7 +1751,8 @@ c*** upon entry q is the value of the exponent at r(jf) or at the turning
 c*** point(q=0) depending on previous calls to startl. upon exit q is the
 c*** value of the exponent at the starting level ls.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -1970,7 +1980,8 @@ c   fini.
       subroutine rprop(jf,jl,f)
 c*** propagates soln ,f, for radial modes from jf to jl ***
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl,nn
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -2049,7 +2060,8 @@ c*** propagates soln ,f, for radial modes from jf to jl ***
       subroutine tprop(jf,jl,f)
 c*** propagates f from jf to jl - toroidal modes ***
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl,nn,ll
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -2164,7 +2176,8 @@ c*** performs dot product with rks coefficients ***
       subroutine intgds(rr,iq,vals)
 c*** interpolates integrands for normalisation,cg,q etc..for use with gauslv.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl,nn,ll
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -2252,7 +2265,8 @@ c*** interpolates integrands for normalisation,cg,q etc..for use with gauslv.
       subroutine fpsm(ls,nvefm,ass)
 c*** spheroidal mode start solution in a fluid region using sph. bessel fns.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -2297,7 +2311,8 @@ c*** spheroidal mode start solution in a fluid region using sph. bessel fns.
       subroutine spsm(ls,nvesm,ass)
 c*** spheroidal mode start solution in a solid region using sph. bessel fns.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -2388,7 +2403,8 @@ c*** spheroidal mode start solution in a solid region using sph. bessel fns.
       subroutine rps(i,a)
 c*** radial mode start soln using sph bessel fns.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -2410,7 +2426,8 @@ c*** radial mode start soln using sph bessel fns.
       subroutine tps(i,a)
 c*** toroidal mode start soln using sph bessel fns.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -2482,7 +2499,8 @@ c  series solution
 c    obtains the eigenfunction of an awkward spheroidal mode by
 c    integrating to the icb or the mcb.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       common/bits/pi,rn,vn,wn,w,wsq,wray,qinv,cg,wgrav,tref,fct,eps,fl,
      +  fl1,fl2,fl3,sfl3,jcom,nord,l,kg,kount,knsw,ifanis,iback
@@ -2544,7 +2562,8 @@ c*** now we are at the cmb -- test to see if we might have to go to the icb
       subroutine fprop(jf,jl,f,iexp)
 c    fprop propagates the fundamental matrix f from jf to jl (a fluid region)
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -2680,7 +2699,8 @@ c    sprop propagates the fundamental matrix f from jf to jl (a solid region)
 c    if jorth=1 the columns of f are orthogonalized at each level
 c    except in regions of oscillatory p and s.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       real*8 lcon,ncon,lspl,nspl,nn,ll
       common r(mk),fmu(mk),flam(mk),qshear(mk),qkappa(mk),
@@ -2854,7 +2874,8 @@ c*** The tangential traction scalar is forced to vanish at the solid
 c*** side of a s/f boundary(level jl). a(j,3,i) is elliminated for
 c*** i=jf...jl and af is loaded from a at level jl.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       common/arem/a(6,3,mk)
       dimension as(6,*),af(4,*)
@@ -2932,7 +2953,8 @@ c    af. It is presumed that fsbdry is used to cross a f/s boundary.
 c*** matches boundary conditions during downward integration --
 c*** first try is at cmb, second try is at icb.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       common/eifx/ar(14,mk),inorm(mk),jjj(mk)
       common/arem/a(6,3,mk)
@@ -2998,7 +3020,8 @@ c   by b*v and is then ready for entry to sprop at level lc.This is intended
 c   to diminish the onset of degeneracy caused by rapid exponential growth
 c   in the mantle for modes with deeply turning S and shallowly turning P.
       implicit real*8(a-h,o-z)
-      parameter (mk=350)
+c***      parameter (mk=350)
+      parameter (mk=1000)
       save
       common/arem/a(6,3,mk)
       dimension b(6,*),as(6,3)

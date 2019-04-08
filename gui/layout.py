@@ -344,10 +344,13 @@ class Ui_MainWindow(object):
         self.Plot_noise_power_spectrum.setObjectName(_fromUtf8("Plot_noise_power_spectrum"))
         self.Plot_dispersion_curve = QtGui.QAction(MainWindow)
         self.Plot_dispersion_curve.setObjectName(_fromUtf8("Plot_dispersion_curve"))
+        self.Save_report = QtGui.QAction(MainWindow)
+        self.Save_report.setObjectName(_fromUtf8("Save_report"))
         self.menuFile.addAction(self.actionOpen_sac_file)
         self.menuFile.addAction(self.actionExit)
         self.menuFile.addAction(self.Save_dispersion_curve)
         self.menuFile.addAction(self.Open_noise_file)
+        self.menuFile.addAction(self.Save_report)
         self.menuTools.addAction(self.Plot_noise_power_spectrum)
         self.menuTools.addAction(self.Plot_dispersion_curve)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -404,6 +407,7 @@ class Ui_MainWindow(object):
         self.Open_noise_file.setText(_translate("MainWindow", "Open Noise File", None))
         self.Plot_noise_power_spectrum.setText(_translate("MainWindow", "Plot noise power spectrum", None))
         self.Plot_dispersion_curve.setText(_translate("MainWindow", "Plot dispersion curve", None))
+        self.Save_report.setText(_translate("MainWindow", "Save Report", None))
 
 from instaseis.gui.qt4mplcanvas import Qt4MplCanvas
 from instaseis.gui.scientific_double_spin_box import ScientificDoubleSpinBox
